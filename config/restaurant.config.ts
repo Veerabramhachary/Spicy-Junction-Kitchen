@@ -18,7 +18,7 @@ import { RestaurantConfig } from '../types/config';
 
 export const restaurantConfig: RestaurantConfig = {
   brand: {
-    name: 'Spicy Junction Kitchen',
+    name: 'Spicy and hot Junction Kitchen',
     shortName: 'Spicy Junction',
     tagline: 'Authentic Hyderabadi Dum Biryani, Quick Bites & Small Plates',
     description:
@@ -38,18 +38,18 @@ export const restaurantConfig: RestaurantConfig = {
     phone: '+91 98492 81734',
     secondaryPhone: '+91 40 2938 4112',
     whatsapp: '919849281734',
-    email: 'hello@spicyjunctionkitchen.in',
+    email: 'hello@spicyandhotjunctionkitchen.in',
   },
 
   address: {
-    shop: 'Shop No 7',
+    shop: 'Shop No 10',
     street: 'Almasguda Rd, Hanuman Nagar',
     locality: 'Badangpet',
     city: 'Hyderabad',
     state: 'Telangana',
-    postalCode: '500112',
+    postalCode: '500113',
     country: 'India',
-    full: 'Shop No 7, Almasguda Rd, Hanuman Nagar, Hyderabad, Badangpet, Telangana 500112',
+    full: 'Shop No 10, Almasguda Rd, Hanuman Nagar, Hyderabad, Badangpet, Telangana 500112',
     landmark: 'Near Hanuman Temple, Almasguda Main Junction',
     directionsNotes: {
       fromNorth: 'From LB Nagar / Sagar Ring Rd: Approx. 12–15 mins via Badangpet main road.',
@@ -59,8 +59,8 @@ export const restaurantConfig: RestaurantConfig = {
   },
 
   googleMaps: {
-    shareUrl: 'https://share.google/ZGE2LbwhaIkwXfKNC',
-    searchUrl: 'https://www.google.com/search?kgmid=/g/11xf2jzfwl&q=Spicy+Junction+Kitchen',
+    shareUrl: 'https://share.google/ZGE2LbwhaIkwXfKNK2',
+    searchUrl: 'https://www.google.com/search?kgmid=/g/11xf2jzfwl&q=Spicy+hot+Junction+Kitchen',
     verifiedBadgeText: 'Verified Google Business Profile',
   },
 
