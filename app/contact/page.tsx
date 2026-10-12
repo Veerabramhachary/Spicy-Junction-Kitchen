@@ -4,6 +4,7 @@ import { MapPin, Phone, Clock, Car, Navigation, CheckCircle2 } from 'lucide-reac
 import { RESTAURANT_INFO } from '../../lib/restaurantData';
 import { Card } from '../../components/ui/Card';
 import { ContactClient } from './ContactClient';
+import { GoogleReviewsSection } from '../../components/GoogleReviewsSection';
 
 export const metadata: Metadata = {
   title: 'Location, Hours & Contact | Spicy Junction Kitchen Hyderabad',
@@ -34,9 +35,7 @@ export default function ContactPage() {
     },
   ];
 
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${RESTAURANT_INFO.name}, ${RESTAURANT_INFO.address.full}`
-  )}`;
+  const googleMapsUrl = RESTAURANT_INFO.googleMapsShareUrl;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-16">
@@ -228,6 +227,11 @@ export default function ContactPage() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Google Maps Reviews & Manual Feedback */}
+      <div className="pt-6 border-t border-stone-200">
+        <GoogleReviewsSection />
       </div>
     </div>
   );

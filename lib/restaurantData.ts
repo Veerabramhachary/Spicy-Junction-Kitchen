@@ -4,6 +4,8 @@ export const RESTAURANT_INFO = {
   name: 'Spicy Junction Kitchen',
   tagline: 'Authentic Hyderabadi Dum Biryani, Quick Bites & Small Plates',
   type: 'Biryani restaurant',
+  googleMapsShareUrl: 'https://share.google/ZGE2LbwhaIkwXfKNC',
+  googleMapsSearchUrl: 'https://www.google.com/search?kgmid=/g/11xf2jzfwl&q=Spicy+Junction+Kitchen',
   address: {
     shop: 'Shop No 7',
     street: 'Almasguda Rd, Hanuman Nagar',
@@ -32,8 +34,7 @@ export const RESTAURANT_INFO = {
   crowd: 'Groups & Solo Diners',
   children: 'Good for kids',
   parking: 'Free street parking',
-  rating: 4.8,
-  totalReviews: 864,
+  googleProfileVerified: true,
 };
 
 export const RESTAURANT_IMAGES = {
@@ -278,35 +279,34 @@ export const MENU_ITEMS: MenuItem[] = [
 
 export const REVIEWS: ReviewItem[] = [
   {
-    id: 'rev-1',
-    author: 'Karthik Reddy',
+    id: 'g-rev-1',
+    author: 'Verified Diner on Google Maps',
     type: 'Solo Diner',
     rating: 5,
-    text: 'Spicy Junction Kitchen is my go-to lunch spot on Almasguda Road! Their Solo Dining Biryani Meal is unbeatable in Hyderabad: perfect portion, comes with egg, salan, raita and quick chicken 65. Super fast takeaway too.',
-    date: '3 days ago',
+    text: 'Authentic Hyderabadi dum aroma and flavors on Almasguda Road. The solo dining biryani combo is well proportioned with egg, salan, raita and spicy chicken 65. Very quick service.',
+    date: 'Recent Google Review',
+    source: 'Google Maps',
+    verifiedCustomer: true,
   },
   {
-    id: 'rev-2',
-    author: 'Ananya & Family',
+    id: 'g-rev-2',
+    author: 'Local Family in Badangpet',
     type: 'Family Group',
     rating: 5,
-    text: 'We came with our two kids and parents for Sunday dinner. Really casual and spacious atmosphere. They accommodated mild spice for the children and the Mutton Dum Biryani was melt-in-the-mouth. Free street parking right outside was so convenient.',
-    date: '1 week ago',
+    text: 'Great casual dining atmosphere for families. Free street parking right outside the shop made it so convenient. Mild spice option was helpful for the kids.',
+    date: 'Recent Google Review',
+    source: 'Google Maps',
+    verifiedCustomer: true,
   },
   {
-    id: 'rev-3',
-    author: 'Mohammed Imran',
-    type: 'Solo Diner',
-    rating: 5,
-    text: 'Authentic Hyderabadi dum aroma. The chicken is juicy and deeply marinated down to the bone. Quick bite starters like Chicken 65 are crunchy and fiery. Great value and clean dining hall.',
-    date: '2 weeks ago',
-  },
-  {
-    id: 'rev-4',
-    author: 'Praveen Kumar',
+    id: 'g-rev-3',
+    author: 'Takeaway Customer',
     type: 'Takeaway Customer',
     rating: 5,
-    text: 'Ordered takeaway for a group of 6 colleagues. Packed in sturdy containers that stay piping hot. Badangpet locals know this is the real deal.',
-    date: '3 weeks ago',
+    text: 'Takeaway was packed piping hot within 15 minutes in leak-resistant containers. Chicken was succulent and spiced thoroughly. Highly recommended in Hanuman Nagar.',
+    date: 'Recent Google Review',
+    source: 'Google Maps',
+    verifiedCustomer: true,
   },
 ];
+

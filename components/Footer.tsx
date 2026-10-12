@@ -112,6 +112,15 @@ export const Footer: React.FC = () => {
             © {new Date().getFullYear()} {RESTAURANT_INFO.name}. All rights reserved.
           </div>
           <div className="flex items-center gap-6">
+            <a
+              href={RESTAURANT_INFO.googleMapsShareUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-orange-400 hover:text-orange-300 transition-colors flex items-center gap-1 font-medium"
+            >
+              <span>Google Maps Profile</span>
+              <span aria-hidden="true">↗</span>
+            </a>
             <Link href="/menu" className="hover:text-stone-400 cursor-pointer">
               Full Menu
             </Link>

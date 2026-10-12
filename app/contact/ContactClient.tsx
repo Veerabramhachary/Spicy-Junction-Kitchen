@@ -16,9 +16,7 @@ export const ContactClient: React.FC = () => {
     setTimeout(() => setCopiedAddress(false), 2000);
   };
 
-  const googleMapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-    `${RESTAURANT_INFO.name}, ${RESTAURANT_INFO.address.full}`
-  )}`;
+  const googleMapsUrl = RESTAURANT_INFO.googleMapsShareUrl;
 
   return (
     <div className="space-y-4">

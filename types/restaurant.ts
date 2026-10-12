@@ -26,10 +26,12 @@ export interface CartItem {
 export interface ReviewItem {
   id: string;
   author: string;
-  type: 'Solo Diner' | 'Family Group' | 'Takeaway Customer';
+  type: 'Solo Diner' | 'Family Group' | 'Takeaway Customer' | 'Group Gathering';
   rating: number;
   text: string;
   date: string;
+  source?: 'Google Maps' | 'Manual Guest Review';
+  verifiedCustomer?: boolean;
 }
 
 export interface TableBooking {
