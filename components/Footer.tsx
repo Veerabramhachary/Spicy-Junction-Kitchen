@@ -1,7 +1,8 @@
 import React from 'react';
 import Link from 'next/link';
-import { MapPin, Phone, Clock, Car, Users, Utensils, Heart } from 'lucide-react';
+import { MapPin, Phone, Clock, Car, Users, Utensils, Heart, Shield } from 'lucide-react';
 import { RESTAURANT_INFO } from '../lib/restaurantData';
+import { restaurantConfig } from '../config/restaurant.config';
 
 export const Footer: React.FC = () => {
   return (
@@ -11,19 +12,17 @@ export const Footer: React.FC = () => {
           {/* Col 1: Brand & Identity */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold font-display text-white tracking-tight">
-              {RESTAURANT_INFO.name}
+              {restaurantConfig.brand.name}
             </h3>
             <p className="text-sm text-stone-400 leading-relaxed">
-              Traditional Hyderabadi dum cooking with freshly ground spices, slow-sealed clay handis, and authentic hospitality. Made for solo dining and group gatherings alike.
+              {restaurantConfig.brand.description}
             </p>
             <div className="flex flex-wrap gap-2 text-xs text-stone-400 pt-1">
               <span>Takeaway</span>
               <span>·</span>
               <span>Dine-in</span>
               <span>·</span>
-              <span>Quick Bites</span>
-              <span>·</span>
-              <span>Small Plates</span>
+              <span>{restaurantConfig.brand.cuisineType}</span>
             </div>
           </div>
 
@@ -37,44 +36,42 @@ export const Footer: React.FC = () => {
                 <Clock className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                 <div>
                   <div className="text-stone-200 font-medium">Lunch Service</div>
-                  <div className="tabular-nums">{RESTAURANT_INFO.timings.lunch}</div>
+                  <div className="tabular-nums">{restaurantConfig.timings.lunch}</div>
                 </div>
               </li>
               <li className="flex items-start gap-2.5">
                 <Clock className="w-4 h-4 text-orange-400 shrink-0 mt-0.5" />
                 <div>
                   <div className="text-stone-200 font-medium">Dinner Service</div>
-                  <div className="tabular-nums">{RESTAURANT_INFO.timings.dinner}</div>
+                  <div className="tabular-nums">{restaurantConfig.timings.dinner}</div>
                 </div>
               </li>
               <li className="text-xs text-stone-500 pt-1">
-                {RESTAURANT_INFO.timings.days}
+                {restaurantConfig.timings.days}
               </li>
             </ul>
           </div>
 
-          {/* Col 3: Amenities & Hospitality */}
+          {/* Col 3: Amenities & Features */}
           <div className="space-y-4">
             <h4 className="text-sm font-semibold uppercase tracking-wider text-stone-200">
               Guest Amenities
             </h4>
             <ul className="space-y-2.5 text-sm text-stone-400">
-              <li className="flex items-center gap-2.5">
-                <Car className="w-4 h-4 text-stone-400 shrink-0" />
-                <span>{RESTAURANT_INFO.parking} (Almasguda Rd)</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Utensils className="w-4 h-4 text-stone-400 shrink-0" />
-                <span>Popular for Solo Dining Combos</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Users className="w-4 h-4 text-stone-400 shrink-0" />
-                <span>Spacious Seating for Groups</span>
-              </li>
-              <li className="flex items-center gap-2.5">
-                <Heart className="w-4 h-4 text-stone-400 shrink-0" />
-                <span>Good for kids & family friendly</span>
-              </li>
+              {restaurantConfig.features.map((feat, idx) => (
+                <li key={idx} className="flex items-center gap-2.5">
+                  {feat.icon === 'car' ? (
+                    <Car className="w-4 h-4 text-stone-400 shrink-0" />
+                  ) : feat.icon === 'utensils' ? (
+                    <Utensils className="w-4 h-4 text-stone-400 shrink-0" />
+                  ) : feat.icon === 'users' ? (
+                    <Users className="w-4 h-4 text-stone-400 shrink-0" />
+                  ) : (
+                    <Heart className="w-4 h-4 text-stone-400 shrink-0" />
+                  )}
+                  <span>{feat.title}</span>
+                </li>
+              ))}
             </ul>
           </div>
 

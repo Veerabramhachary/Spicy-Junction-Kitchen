@@ -1,8 +1,9 @@
 import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Utensils, Clock, Car, Heart, ShoppingBag } from 'lucide-react';
-import { RESTAURANT_INFO, RESTAURANT_IMAGES, MENU_ITEMS } from '../lib/restaurantData';
+import { ArrowRight, Utensils, Clock, Car, Heart, ShoppingBag, Users } from 'lucide-react';
+import { RESTAURANT_IMAGES, MENU_ITEMS } from '../lib/restaurantData';
+import { restaurantConfig } from '../config/restaurant.config';
 import { Button } from '../components/ui/Button';
 import { DishCard } from '../components/DishCard';
 import { ReserveTableButton, OpenCartButton } from '../components/ReserveTableButton';
@@ -20,17 +21,21 @@ export default function HomePage() {
             {/* Left Column: Headline & Action */}
             <div className="lg:col-span-6 flex flex-col justify-center space-y-6">
               <div className="inline-flex items-center gap-2 text-xs font-semibold text-orange-700 tracking-wide uppercase">
-                <span>Shop No 7, Almasguda Rd</span>
+                <span>
+                  {restaurantConfig.address.shop}, {restaurantConfig.address.street}
+                </span>
                 <span aria-hidden="true">·</span>
-                <span>Badangpet, Hyderabad</span>
+                <span>
+                  {restaurantConfig.address.locality}, {restaurantConfig.address.city}
+                </span>
               </div>
 
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-stone-900 tracking-tight font-display leading-[1.08] text-balance">
-                Authentic Hyderabadi Dum Biryani, Quick Bites & Small Plates.
+                {restaurantConfig.brand.tagline}
               </h1>
 
               <p className="text-base sm:text-lg text-stone-600 leading-relaxed max-w-xl">
-                Experience slow-cooked earthen handi biryani sealed with fragrant spices, crispy starters, and welcoming dining. Famous for solo dining combos, family lunches, and late dinners.
+                {restaurantConfig.brand.description}
               </p>
 
               {/* Service Capabilities Row */}
@@ -66,7 +71,7 @@ export default function HomePage() {
 
               {/* Trust Metric Strip */}
               <a
-                href={RESTAURANT_INFO.googleMapsShareUrl}
+                href={restaurantConfig.googleMaps.shareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="pt-4 border-t border-stone-200/80 flex items-center gap-3 text-xs text-stone-600 hover:text-stone-900 transition-colors group"
@@ -90,14 +95,16 @@ export default function HomePage() {
                       fill="#EA4335"
                     />
                   </svg>
-                  <span>Verified Google Business Profile</span>
+                  <span>{restaurantConfig.googleMaps.verifiedBadgeText}</span>
                 </div>
                 <span>·</span>
                 <span className="text-orange-600 font-medium group-hover:underline">
                   View Real Google Maps Reviews & Details →
                 </span>
                 <span>·</span>
-                <span>Badangpet, Telangana</span>
+                <span>
+                  {restaurantConfig.address.locality}, {restaurantConfig.address.state}
+                </span>
               </a>
             </div>
 
@@ -106,7 +113,7 @@ export default function HomePage() {
               <div className="relative h-80 sm:h-96 lg:h-full min-h-[380px] rounded-2xl overflow-hidden border border-stone-200/80 shadow-md group">
                 <Image
                   src={RESTAURANT_IMAGES.hero}
-                  alt="Authentic Hyderabadi Dum Biryani in clay handi with mirchi ka salan and raita at Spicy Junction Kitchen"
+                  alt={`${restaurantConfig.brand.name} culinary showcase`}
                   fill
                   priority
                   className="object-cover group-hover:scale-102 transition-transform duration-700"
@@ -130,56 +137,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4-Item Credential Bar */}
+      {/* Dynamic Features Credential Bar from Config */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-6 bg-stone-100/80 rounded-2xl border border-stone-200/80">
-          <div className="flex items-start gap-3.5">
-            <div className="p-2.5 bg-white rounded-xl text-orange-600 shadow-2xs">
-              <Utensils className="w-5 h-5" />
+          {restaurantConfig.features.map((feat, idx) => (
+            <div key={idx} className="flex items-start gap-3.5">
+              <div className="p-2.5 bg-white rounded-xl text-orange-600 shadow-2xs">
+                {feat.icon === 'utensils' ? (
+                  <Utensils className="w-5 h-5" />
+                ) : feat.icon === 'clock' ? (
+                  <Clock className="w-5 h-5" />
+                ) : feat.icon === 'car' ? (
+                  <Car className="w-5 h-5" />
+                ) : (
+                  <Heart className="w-5 h-5" />
+                )}
+              </div>
+              <div>
+                <h4 className="text-sm font-bold text-stone-900">{feat.title}</h4>
+                <p className="text-xs text-stone-600 mt-0.5">{feat.description}</p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-bold text-stone-900">Solo Dining Comfort</h4>
-              <p className="text-xs text-stone-600 mt-0.5">
-                Thoughtfully sized individual platters, quick counters, and zero hassle.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3.5">
-            <div className="p-2.5 bg-white rounded-xl text-orange-600 shadow-2xs">
-              <Clock className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-stone-900">Lunch & Dinner Service</h4>
-              <p className="text-xs text-stone-600 mt-0.5">
-                Fresh batches prepared twice daily for lunch (11:30–3:30) & dinner (7:00–11:30).
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3.5">
-            <div className="p-2.5 bg-white rounded-xl text-orange-600 shadow-2xs">
-              <Car className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-stone-900">Free Street Parking</h4>
-              <p className="text-xs text-stone-600 mt-0.5">
-                Spacious curbside parking directly in front along Almasguda Road.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3.5">
-            <div className="p-2.5 bg-white rounded-xl text-orange-600 shadow-2xs">
-              <Heart className="w-5 h-5" />
-            </div>
-            <div>
-              <h4 className="text-sm font-bold text-stone-900">Good for Kids & Groups</h4>
-              <p className="text-xs text-stone-600 mt-0.5">
-                Spacious seating layouts with mild spice options customized for little ones.
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
@@ -198,7 +177,7 @@ export default function HomePage() {
             href="/menu"
             className="text-sm font-semibold text-orange-600 hover:text-orange-700 inline-flex items-center gap-1.5 cursor-pointer"
           >
-            <span>View all 15+ dishes & small plates</span>
+            <span>View all dishes & small plates</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
@@ -210,33 +189,29 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* The 2-Column Experience Spotlight */}
+      {/* Atmosphere Spotlight */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-stone-900 text-white rounded-3xl p-8 sm:p-12 overflow-hidden border border-stone-800">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-6 space-y-5">
               <div className="text-xs uppercase tracking-wider text-orange-400 font-semibold">
-                Casual Dining Atmosphere
+                {restaurantConfig.atmosphere.badge}
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold font-display tracking-tight text-balance">
-                Warm Indian Hospitality in Hanuman Nagar, Badangpet.
+                {restaurantConfig.atmosphere.title}
               </h2>
               <p className="text-sm sm:text-base text-stone-300 leading-relaxed">
-                Whether you drop in during lunch break for a quick solo biryani platter or gather with 10 friends for a weekend dinner banquet, our dining hall welcomes you with genuine warmth.
+                {restaurantConfig.atmosphere.description}
               </p>
               <div className="grid grid-cols-2 gap-4 pt-2">
-                <div className="p-4 bg-stone-800/80 rounded-xl border border-stone-700/60">
-                  <div className="text-lg font-bold text-orange-400 font-display">Solo Friendly</div>
-                  <div className="text-xs text-stone-400 mt-1">
-                    Zero awkwardness, quick table turnover, dedicated individual meal platters.
+                {restaurantConfig.atmosphere.pillars.slice(0, 2).map((pillar, idx) => (
+                  <div key={idx} className="p-4 bg-stone-800/80 rounded-xl border border-stone-700/60">
+                    <div className="text-lg font-bold text-orange-400 font-display">
+                      {pillar.title}
+                    </div>
+                    <div className="text-xs text-stone-400 mt-1">{pillar.bulletPoint}</div>
                   </div>
-                </div>
-                <div className="p-4 bg-stone-800/80 rounded-xl border border-stone-700/60">
-                  <div className="text-lg font-bold text-orange-400 font-display">Kid Loved</div>
-                  <div className="text-xs text-stone-400 mt-1">
-                    Mild spice custom orders, paneer small bites, and high chairs on demand.
-                  </div>
-                </div>
+                ))}
               </div>
               <div className="pt-2">
                 <Link href="/atmosphere">
@@ -252,7 +227,7 @@ export default function HomePage() {
               <div className="relative rounded-2xl overflow-hidden border border-stone-700/80 shadow-xl aspect-4/3">
                 <Image
                   src={RESTAURANT_IMAGES.atmosphere}
-                  alt="Casual and welcoming dining atmosphere at Spicy Junction Kitchen with wooden tables and warm pendant lamps"
+                  alt={`${restaurantConfig.brand.name} dining ambiance`}
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
@@ -276,7 +251,7 @@ export default function HomePage() {
               Ready for lunch or dinner today?
             </h3>
             <p className="text-xs sm:text-sm text-stone-700">
-              Visit us at <strong className="text-stone-900">Shop No 7, Almasguda Rd, Hanuman Nagar, Badangpet</strong>. Takeaway packed in 15 mins. Free street parking right outside.
+              Visit us at <strong className="text-stone-900">{restaurantConfig.address.full}</strong>. Takeaway packed in 15 mins. Free street parking right outside.
             </p>
           </div>
           <div className="flex items-center gap-3 shrink-0">

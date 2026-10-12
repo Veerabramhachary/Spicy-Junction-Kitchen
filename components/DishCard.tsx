@@ -4,6 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { ShoppingBag } from 'lucide-react';
 import { MenuItem } from '../types/restaurant';
+import { formatPrice } from '../lib/restaurantData';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useCart } from '../context/CartContext';
@@ -61,7 +62,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
               </h3>
             </div>
             <div className="text-base font-bold text-stone-900 tabular-nums shrink-0">
-              ₹{dish.price}
+              {formatPrice(dish.price)}
             </div>
           </div>
 

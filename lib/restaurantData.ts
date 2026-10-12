@@ -1,32 +1,28 @@
-import { MenuItem, ReviewItem } from '../types/restaurant';
+import { restaurantConfig } from '../config/restaurant.config';
+export { restaurantConfig };
 
 export const RESTAURANT_INFO = {
-  name: 'Spicy Junction Kitchen',
-  tagline: 'Authentic Hyderabadi Dum Biryani, Quick Bites & Small Plates',
-  type: 'Biryani restaurant',
-  googleMapsShareUrl: 'https://share.google/ZGE2LbwhaIkwXfKNC',
-  googleMapsSearchUrl: 'https://www.google.com/search?kgmid=/g/11xf2jzfwl&q=Spicy+Junction+Kitchen',
-  address: {
-    shop: 'Shop No 7',
-    street: 'Almasguda Rd, Hanuman Nagar',
-    locality: 'Badangpet, Hyderabad',
-    state: 'Telangana',
-    pincode: '500112',
-    full: 'Shop No 7, Almasguda Rd, Hanuman Nagar, Hyderabad, Badangpet, Telangana 500112',
-    landmark: 'Near Hanuman Temple, Almasguda Main Junction',
-  },
-  contact: {
-    phone: '+91 98492 81734',
-    secondaryPhone: '+91 40 2938 4112',
-    email: 'hello@spicyjunctionkitchen.in',
-    whatsapp: '919849281734',
-  },
-  timings: {
-    lunch: '11:30 AM – 3:30 PM',
-    dinner: '7:00 PM – 11:30 PM',
-    days: 'Open Daily (Monday – Sunday)',
-  },
-  serviceOptions: ['Takeaway', 'Dine-in'] as const,
+  name: restaurantConfig.brand.name,
+  shortName: restaurantConfig.brand.shortName,
+  tagline: restaurantConfig.brand.tagline,
+  description: restaurantConfig.brand.description,
+  type: restaurantConfig.brand.cuisineType,
+  establishedYear: restaurantConfig.brand.establishedYear,
+  bannerNotice: restaurantConfig.brand.bannerNotice,
+
+  googleMapsShareUrl: restaurantConfig.googleMaps.shareUrl,
+  googleMapsSearchUrl: restaurantConfig.googleMaps.searchUrl,
+  googleProfileVerified: true,
+
+  address: restaurantConfig.address,
+  contact: restaurantConfig.contact,
+  timings: restaurantConfig.timings,
+
+  serviceOptions: [
+    ...(restaurantConfig.services.takeaway ? (['Takeaway'] as const) : []),
+    ...(restaurantConfig.services.dineIn ? (['Dine-in'] as const) : []),
+    ...(restaurantConfig.services.delivery ? (['Delivery'] as const) : []),
+  ],
   popularFor: 'Solo dining',
   offerings: ['Quick bite', 'Small plates', 'Dishes'] as const,
   diningOptions: ['Lunch', 'Dinner'] as const,
@@ -34,279 +30,21 @@ export const RESTAURANT_INFO = {
   crowd: 'Groups & Solo Diners',
   children: 'Good for kids',
   parking: 'Free street parking',
-  googleProfileVerified: true,
 };
 
-export const RESTAURANT_IMAGES = {
-  hero: '/images/hero_hyderabadi_dum_biryani_1791709869533.jpg',
-  soloPlatter: '/images/biryani_solo_platter_1791709890478.jpg',
-  smallPlates: '/images/hyderabad_starters_small_plates_1791709913148.jpg',
-  atmosphere: '/images/restaurant_casual_dining_1791709935010.jpg',
-};
+export const RESTAURANT_IMAGES = restaurantConfig.images;
+export const MENU_ITEMS = restaurantConfig.menu;
+export const REVIEWS = restaurantConfig.initialReviews;
+export const FAQS = restaurantConfig.faqs;
+export const CATEGORIES = restaurantConfig.categories;
 
-export const MENU_ITEMS: MenuItem[] = [
-  // --- BIRYANI DISHES ---
-  {
-    id: 'biryani-special-chicken-dum',
-    name: 'Special Hyderabadi Chicken Dum Biryani',
-    category: 'biryani',
-    categoryLabel: 'Dum Biryani',
-    description: 'Aged long-grain basmati cooked with tender chicken cuts on dum with saffron, fried onions, and whole spices. Served with Mirchi Ka Salan & Dahi Raita.',
-    price: 240,
-    image: RESTAURANT_IMAGES.hero,
-    dietary: 'non-veg',
-    spiceLevel: 'medium',
-    isPopular: true,
-    serves: '1-2 persons (approx. 550g)',
-  },
-  {
-    id: 'biryani-mutton-dum',
-    name: 'Royal Nizami Mutton Dum Biryani',
-    category: 'biryani',
-    categoryLabel: 'Dum Biryani',
-    description: 'Slow-simmered tender baby goat mutton marinated in rich spices and mint, sealed in earthen handi. Rich, aromatic and deeply satisfying.',
-    price: 360,
-    image: RESTAURANT_IMAGES.hero,
-    dietary: 'non-veg',
-    spiceLevel: 'medium',
-    isPopular: true,
-    serves: '1-2 persons (approx. 580g)',
-  },
-  {
-    id: 'biryani-egg-dum',
-    name: 'Spicy Egg Dum Biryani',
-    category: 'biryani',
-    categoryLabel: 'Dum Biryani',
-    description: 'Double boiled country eggs tossed in roasted pepper masala, layered with fragrant saffron biryani rice. Quick, filling and flavorful.',
-    price: 190,
-    dietary: 'egg',
-    spiceLevel: 'medium',
-    serves: '1 person (approx. 500g)',
-  },
-  {
-    id: 'biryani-paneer-veg-dum',
-    name: 'Shahi Subz & Paneer Dum Biryani',
-    category: 'biryani',
-    categoryLabel: 'Dum Biryani',
-    description: 'Fresh malai paneer cubes, garden vegetables and golden birista slow-cooked with basmati rice and aromatic Kewra essence.',
-    price: 210,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    serves: '1-2 persons (approx. 520g)',
-  },
-
-  // --- SOLO DINING SPECIALS (Popular For Solo Dining) ---
-  {
-    id: 'solo-chicken-biryani-combo',
-    name: 'Solo Dining Chicken Biryani Meal',
-    category: 'solo-combos',
-    categoryLabel: 'Solo Specials',
-    description: 'Curated single-portion Chicken Dum Biryani, 1 Boiled Egg, Mini Chicken 65 Quick Bite, Salan, Raita and Fresh Onion Lemon Salad.',
-    price: 260,
-    image: RESTAURANT_IMAGES.soloPlatter,
-    dietary: 'non-veg',
-    spiceLevel: 'medium',
-    isPopular: true,
-    isSoloSpecial: true,
-    serves: 'Ideal for 1 person',
-  },
-  {
-    id: 'solo-quick-egg-box',
-    name: 'Solo Quick Bite Egg Biryani Box',
-    category: 'solo-combos',
-    categoryLabel: 'Solo Specials',
-    description: 'Single portion aromatic Dum Biryani rice with 2 spice-crusted boiled eggs, Salan, Raita, and crispy roasted papad.',
-    price: 180,
-    dietary: 'egg',
-    spiceLevel: 'medium',
-    isSoloSpecial: true,
-    serves: 'Ideal for 1 person',
-  },
-  {
-    id: 'solo-paneer-meal',
-    name: 'Solo Paneer Tikka Biryani Platter',
-    category: 'solo-combos',
-    categoryLabel: 'Solo Specials',
-    description: 'Portion of Veg Dum Biryani, 3 pcs Tandoori Paneer Tikka small plate, Dahi Raita, Salan, and Gulab Jamun dessert.',
-    price: 230,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    isSoloSpecial: true,
-    serves: 'Ideal for 1 person',
-  },
-
-  // --- QUICK BITES & SMALL PLATES ---
-  {
-    id: 'small-chicken-65',
-    name: 'Hyderabadi Chicken 65 (Crispy Small Plate)',
-    category: 'small-plates',
-    categoryLabel: 'Quick Bites & Small Plates',
-    description: 'Boneless tender chicken tossed in spicy garlic red chili sauce, curry leaves, and tempered green chilies. The quintessential Hyderabad starter.',
-    price: 190,
-    image: RESTAURANT_IMAGES.smallPlates,
-    dietary: 'non-veg',
-    spiceLevel: 'fiery',
-    isPopular: true,
-    isQuickBite: true,
-    isSmallPlate: true,
-    serves: '2-3 persons shareable',
-  },
-  {
-    id: 'small-chilli-chicken',
-    name: 'Andhra Green Chilli Chicken Dry',
-    category: 'small-plates',
-    categoryLabel: 'Quick Bites & Small Plates',
-    description: 'Spicy chicken morsels sautéed with slit green chilies, cracked black pepper, and fresh coriander leaves.',
-    price: 200,
-    dietary: 'non-veg',
-    spiceLevel: 'fiery',
-    isQuickBite: true,
-    isSmallPlate: true,
-    serves: '2-3 persons shareable',
-  },
-  {
-    id: 'small-paneer-tikka-plate',
-    name: 'Tandoori Paneer Tikka Small Plate',
-    category: 'small-plates',
-    categoryLabel: 'Quick Bites & Small Plates',
-    description: 'Char-grilled cottage cheese cubes marinated in hung curd, carom seeds, and mustard oil, served with mint chutney and lemon wedges.',
-    price: 180,
-    image: RESTAURANT_IMAGES.smallPlates,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    isSmallPlate: true,
-    serves: '2 persons shareable',
-  },
-  {
-    id: 'small-veg-samosa-platter',
-    name: 'Crispy Samosa Quick Bite (3 Pcs)',
-    category: 'small-plates',
-    categoryLabel: 'Quick Bites & Small Plates',
-    description: 'Golden flaky pastry filled with spiced cumin potatoes and green peas, served with sweet tamarind and spicy mint dips.',
-    price: 90,
-    image: RESTAURANT_IMAGES.smallPlates,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    isQuickBite: true,
-    isSmallPlate: true,
-    serves: 'Quick snack for 1-2',
-  },
-  {
-    id: 'small-corn-pepper-fry',
-    name: 'Crispy Corn Pepper Fry (Small Plate)',
-    category: 'small-plates',
-    categoryLabel: 'Quick Bites & Small Plates',
-    description: 'Crispy sweet corn kernels tossed with crushed peppercorns, bell peppers, spring onion, and chaat spices.',
-    price: 140,
-    dietary: 'veg',
-    spiceLevel: 'medium',
-    isQuickBite: true,
-    isSmallPlate: true,
-    serves: '1-2 persons',
-  },
-
-  // --- CURRIES & BREADS (Dishes) ---
-  {
-    id: 'curry-butter-chicken',
-    name: 'Old Delhi Style Butter Chicken',
-    category: 'curries',
-    categoryLabel: 'Curries & Dishes',
-    description: 'Tender chicken tikka simmered in creamy satin tomato makhani gravy enriched with butter and kasuri methi.',
-    price: 240,
-    dietary: 'non-veg',
-    spiceLevel: 'mild',
-    serves: '2 persons',
-  },
-  {
-    id: 'curry-mirchi-ka-salan-extra',
-    name: 'Traditional Mirchi Ka Salan (Side Dish)',
-    category: 'curries',
-    categoryLabel: 'Curries & Dishes',
-    description: 'Mild green bhavnagri peppers in roasted peanut, sesame, and coconut tamarind gravy. The soulmate of Hyderabadi Biryani.',
-    price: 90,
-    dietary: 'veg',
-    spiceLevel: 'medium',
-    serves: '1-2 persons',
-  },
-  {
-    id: 'bread-rumali-roti',
-    name: 'Handkerchief Rumali Roti (2 Pcs)',
-    category: 'curries',
-    categoryLabel: 'Curries & Dishes',
-    description: 'Paper-thin, soft whole wheat flatbread tossed on inverted iron wok.',
-    price: 50,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    serves: '1 person',
-  },
-  {
-    id: 'bread-butter-naan',
-    name: 'Butter Garlic Naan',
-    category: 'curries',
-    categoryLabel: 'Curries & Dishes',
-    description: 'Clay-oven baked fluffy bread brushed with roasted garlic and creamy dairy butter.',
-    price: 60,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    serves: '1 person',
-  },
-
-  // --- DESSERTS & DRINKS ---
-  {
-    id: 'dessert-double-ka-meetha',
-    name: 'Hyderabadi Double Ka Meetha',
-    category: 'drinks-desserts',
-    categoryLabel: 'Desserts & Drinks',
-    description: 'Classic royal Hyderabadi bread pudding soaked in saffron cardamom milk, topped with pistachio slivers and silver vark.',
-    price: 110,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    isPopular: true,
-    serves: '1 person',
-  },
-  {
-    id: 'drink-masala-chaas',
-    name: 'Cooling Masala Buttermilk (Chaas)',
-    category: 'drinks-desserts',
-    categoryLabel: 'Desserts & Drinks',
-    description: 'Fresh churned spiced yogurt drink with ginger, green chili, roasted cumin, and fresh mint leaves.',
-    price: 50,
-    dietary: 'veg',
-    spiceLevel: 'mild',
-    serves: '1 person (300ml)',
-  },
-];
-
-export const REVIEWS: ReviewItem[] = [
-  {
-    id: 'g-rev-1',
-    author: 'Verified Diner on Google Maps',
-    type: 'Solo Diner',
-    rating: 5,
-    text: 'Authentic Hyderabadi dum aroma and flavors on Almasguda Road. The solo dining biryani combo is well proportioned with egg, salan, raita and spicy chicken 65. Very quick service.',
-    date: 'Recent Google Review',
-    source: 'Google Maps',
-    verifiedCustomer: true,
-  },
-  {
-    id: 'g-rev-2',
-    author: 'Local Family in Badangpet',
-    type: 'Family Group',
-    rating: 5,
-    text: 'Great casual dining atmosphere for families. Free street parking right outside the shop made it so convenient. Mild spice option was helpful for the kids.',
-    date: 'Recent Google Review',
-    source: 'Google Maps',
-    verifiedCustomer: true,
-  },
-  {
-    id: 'g-rev-3',
-    author: 'Takeaway Customer',
-    type: 'Takeaway Customer',
-    rating: 5,
-    text: 'Takeaway was packed piping hot within 15 minutes in leak-resistant containers. Chicken was succulent and spiced thoroughly. Highly recommended in Hanuman Nagar.',
-    date: 'Recent Google Review',
-    source: 'Google Maps',
-    verifiedCustomer: true,
-  },
-];
-
+/**
+ * Currency formatter respecting restaurantConfig currency settings
+ */
+export function formatPrice(amount: number): string {
+  const { symbol, placement } = restaurantConfig.currency;
+  if (placement === 'suffix') {
+    return `${amount} ${symbol}`;
+  }
+  return `${symbol}${amount}`;
+}

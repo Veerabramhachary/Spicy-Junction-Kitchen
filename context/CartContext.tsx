@@ -1,13 +1,16 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { MenuItem, CartItem, ServiceOption } from '../types/restaurant';
+import { MenuItem, CartItem, ServiceOption, OrderRecord } from '../types/restaurant';
+import { restaurantConfig } from '../config/restaurant.config';
+import { formatPrice } from '../lib/restaurantData';
 
 interface CartContextType {
   items: CartItem[];
-  addToCart: (item: MenuItem) => void;
+  addToCart: (item: MenuItem, specialInstructions?: string) => void;
   removeFromCart: (itemId: string) => void;
   updateQuantity: (itemId: string, delta: number) => void;
+  updateItemInstruction: (itemId: string, note: string) => void;
   clearCart: () => void;
   orderType: ServiceOption;
   setOrderType: (type: ServiceOption) => void;
@@ -16,7 +19,28 @@ interface CartContextType {
   isReservationOpen: boolean;
   setIsReservationOpen: (open: boolean) => void;
   subtotal: number;
+  packagingFee: number;
+  taxAmount: number;
+  grandTotal: number;
   itemCount: number;
+  // Production Order History & Tracking
+  orderHistory: OrderRecord[];
+  activeOrder: OrderRecord | null;
+  setActiveOrder: (order: OrderRecord | null) => void;
+  placeOrder: (orderPayload: {
+    customer: {
+      name: string;
+      phone: string;
+      email?: string;
+      tableNumber?: string;
+      deliveryAddress?: string;
+      notes?: string;
+    };
+    fulfillmentTime: string;
+    paymentMethod: OrderRecord['paymentMethod'];
+    paymentStatus?: OrderRecord['paymentStatus'];
+  }) => OrderRecord;
+  formatCurrency: (amount: number) => string;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -26,16 +50,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [orderType, setOrderType] = useState<ServiceOption>('Takeaway');
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isReservationOpen, setIsReservationOpen] = useState(false);
+  const [orderHistory, setOrderHistory] = useState<OrderRecord[]>([]);
+  const [activeOrder, setActiveOrder] = useState<OrderRecord | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('spicy_junction_cart');
-      if (saved) {
-        setItems(JSON.parse(saved));
+      const savedCart = localStorage.getItem('sjk_restaurant_cart');
+      if (savedCart) {
+        setItems(JSON.parse(savedCart));
+      }
+      const savedOrders = localStorage.getItem('sjk_order_history');
+      if (savedOrders) {
+        const parsedOrders: OrderRecord[] = JSON.parse(savedOrders);
+        setOrderHistory(parsedOrders);
+        if (parsedOrders.length > 0) {
+          // If there's an ongoing recent order (less than 2 hours ago), set it as active
+          const mostRecent = parsedOrders[0];
+          const orderAge = Date.now() - new Date(mostRecent.createdAt).getTime();
+          if (orderAge < 2 * 60 * 60 * 1000 && mostRecent.status !== 'completed') {
+            setActiveOrder(mostRecent);
+          }
+        }
       }
     } catch {
-      // localStorage unavailable or SSR
+      // localStorage fallback
     }
     setIsInitialized(true);
   }, []);
@@ -43,21 +82,36 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     if (!isInitialized) return;
     try {
-      localStorage.setItem('spicy_junction_cart', JSON.stringify(items));
+      localStorage.setItem('sjk_restaurant_cart', JSON.stringify(items));
     } catch {
-      // storage unavailable
+      // storage quota / unavailable
     }
   }, [items, isInitialized]);
 
-  const addToCart = (item: MenuItem) => {
+  useEffect(() => {
+    if (!isInitialized) return;
+    try {
+      localStorage.setItem('sjk_order_history', JSON.stringify(orderHistory));
+    } catch {
+      // storage fallback
+    }
+  }, [orderHistory, isInitialized]);
+
+  const addToCart = (item: MenuItem, specialInstructions?: string) => {
     setItems((prev) => {
       const existing = prev.find((ci) => ci.item.id === item.id);
       if (existing) {
         return prev.map((ci) =>
-          ci.item.id === item.id ? { ...ci, quantity: ci.quantity + 1 } : ci
+          ci.item.id === item.id
+            ? {
+                ...ci,
+                quantity: ci.quantity + 1,
+                specialInstructions: specialInstructions || ci.specialInstructions,
+              }
+            : ci
         );
       }
-      return [...prev, { item, quantity: 1 }];
+      return [...prev, { item, quantity: 1, specialInstructions }];
     });
     setIsCartOpen(true);
   };
@@ -80,12 +134,57 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     );
   };
 
+  const updateItemInstruction = (itemId: string, note: string) => {
+    setItems((prev) =>
+      prev.map((ci) => (ci.item.id === itemId ? { ...ci, specialInstructions: note } : ci))
+    );
+  };
+
   const clearCart = () => {
     setItems([]);
   };
 
   const subtotal = items.reduce((acc, ci) => acc + ci.item.price * ci.quantity, 0);
+  const packagingFee = orderType === 'Takeaway' ? restaurantConfig.pricing.takeawayPackagingFee : 0;
+  const taxAmount = Math.round((subtotal * restaurantConfig.pricing.taxRatePercent) / 100);
+  const grandTotal = subtotal + packagingFee + taxAmount;
   const itemCount = items.reduce((acc, ci) => acc + ci.quantity, 0);
+
+  const placeOrder = (orderPayload: {
+    customer: {
+      name: string;
+      phone: string;
+      email?: string;
+      tableNumber?: string;
+      deliveryAddress?: string;
+      notes?: string;
+    };
+    fulfillmentTime: string;
+    paymentMethod: OrderRecord['paymentMethod'];
+    paymentStatus?: OrderRecord['paymentStatus'];
+  }): OrderRecord => {
+    const orderId = `${restaurantConfig.brand.shortName.toUpperCase().replace(/\s+/g, '')}-${Date.now().toString().slice(-4)}`;
+    const newRecord: OrderRecord = {
+      id: orderId,
+      createdAt: new Date().toISOString(),
+      items: [...items],
+      subtotal,
+      packagingFee,
+      taxAmount,
+      total: grandTotal,
+      serviceOption: orderType,
+      fulfillmentTime: orderPayload.fulfillmentTime,
+      customer: orderPayload.customer,
+      paymentMethod: orderPayload.paymentMethod,
+      paymentStatus: orderPayload.paymentStatus || 'pending_at_counter',
+      status: 'confirmed',
+    };
+
+    setOrderHistory((prev) => [newRecord, ...prev]);
+    setActiveOrder(newRecord);
+    clearCart();
+    return newRecord;
+  };
 
   return (
     <CartContext.Provider
@@ -94,6 +193,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         addToCart,
         removeFromCart,
         updateQuantity,
+        updateItemInstruction,
         clearCart,
         orderType,
         setOrderType,
@@ -102,7 +202,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isReservationOpen,
         setIsReservationOpen,
         subtotal,
+        packagingFee,
+        taxAmount,
+        grandTotal,
         itemCount,
+        orderHistory,
+        activeOrder,
+        setActiveOrder,
+        placeOrder,
+        formatCurrency: formatPrice,
       }}
     >
       {children}

@@ -1,15 +1,19 @@
-export type ServiceOption = 'Takeaway' | 'Dine-in';
+export type DietaryType = 'non-veg' | 'veg' | 'egg' | 'vegan';
+export type SpiceLevel = 'none' | 'mild' | 'medium' | 'fiery';
+export type ServiceOption = 'Takeaway' | 'Dine-in' | 'Delivery';
+export type OrderStatus = 'placed' | 'confirmed' | 'preparing' | 'ready' | 'completed' | 'cancelled';
+export type PaymentMethod = 'pay_at_counter' | 'upi_qr' | 'card_simulator';
 
 export interface MenuItem {
   id: string;
   name: string;
-  category: 'biryani' | 'solo-combos' | 'small-plates' | 'curries' | 'drinks-desserts';
-  categoryLabel: string;
+  category: string;
+  categoryLabel?: string;
   description: string;
   price: number;
   image?: string;
-  dietary: 'non-veg' | 'veg' | 'egg';
-  spiceLevel: 'mild' | 'medium' | 'fiery';
+  dietary: DietaryType;
+  spiceLevel: SpiceLevel;
   isPopular?: boolean;
   isQuickBite?: boolean;
   isSmallPlate?: boolean;
@@ -20,7 +24,7 @@ export interface MenuItem {
 export interface CartItem {
   item: MenuItem;
   quantity: number;
-  selectedOption?: string;
+  specialInstructions?: string;
 }
 
 export interface ReviewItem {
@@ -35,6 +39,7 @@ export interface ReviewItem {
 }
 
 export interface TableBooking {
+  id?: string;
   name: string;
   phone: string;
   date: string;
@@ -43,4 +48,28 @@ export interface TableBooking {
   partySize: number;
   diningPreference: 'Solo Dining' | 'Family with Children' | 'Group Gathering';
   specialRequests?: string;
+  createdAt?: string;
+}
+
+export interface OrderRecord {
+  id: string;
+  createdAt: string;
+  items: CartItem[];
+  subtotal: number;
+  packagingFee: number;
+  taxAmount: number;
+  total: number;
+  serviceOption: ServiceOption;
+  fulfillmentTime: string; // e.g., 'ASAP (15-20 min)' or 'Today, 8:30 PM'
+  customer: {
+    name: string;
+    phone: string;
+    email?: string;
+    tableNumber?: string;
+    deliveryAddress?: string;
+    notes?: string;
+  };
+  paymentMethod: PaymentMethod;
+  paymentStatus: 'paid' | 'pending_at_counter';
+  status: OrderStatus;
 }

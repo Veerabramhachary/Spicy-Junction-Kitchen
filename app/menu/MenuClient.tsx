@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react';
 import { Search, UtensilsCrossed } from 'lucide-react';
 import { MENU_ITEMS } from '../../lib/restaurantData';
+import { restaurantConfig } from '../../config/restaurant.config';
 import { Button } from '../../components/ui/Button';
 import { DishCard } from '../../components/DishCard';
 
@@ -12,14 +13,7 @@ export const MenuClient: React.FC = () => {
   const [selectedSpice, setSelectedSpice] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const categories = [
-    { id: 'all', label: 'All Offerings' },
-    { id: 'biryani', label: 'Hyderabadi Dum Biryani' },
-    { id: 'solo-combos', label: 'Solo Dining Combos' },
-    { id: 'small-plates', label: 'Quick Bites & Small Plates' },
-    { id: 'curries', label: 'Curries & Breads' },
-    { id: 'drinks-desserts', label: 'Desserts & Beverages' },
-  ];
+  const categories = restaurantConfig.categories;
 
   const filteredItems = useMemo(() => {
     return MENU_ITEMS.filter((item) => {

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { ShoppingBag, Menu, X, Calendar } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { restaurantConfig } from '../config/restaurant.config';
 
 export const Navbar: React.FC = () => {
   const pathname = usePathname();
@@ -28,7 +29,7 @@ export const Navbar: React.FC = () => {
             href="/"
             className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 font-display whitespace-nowrap shrink-0 hover:text-orange-600 transition-colors cursor-pointer"
           >
-            Spicy Junction Kitchen
+            {restaurantConfig.brand.name}
           </Link>
 
           {/* Zone 2: 4–5 clean single-line text navigation links */}

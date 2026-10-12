@@ -41,7 +41,7 @@ export const ReservationModal: React.FC = () => {
     <Modal
       isOpen={isReservationOpen}
       onClose={handleClose}
-      title="Reserve a Table at Spicy Junction"
+      title={`Reserve a Table at ${RESTAURANT_INFO.shortName}`}
       maxWidth="md"
     >
       {isSuccess ? (
@@ -62,7 +62,7 @@ export const ReservationModal: React.FC = () => {
             </div>
             <div className="flex items-center gap-2">
               <Car className="w-4 h-4 text-stone-500" />
-              <span>Reminder: Free street parking available outside on Almasguda Rd.</span>
+              <span>Reminder: {RESTAURANT_INFO.parking} available outside on {RESTAURANT_INFO.address.street}.</span>
             </div>
           </div>
           <Button variant="primary" fullWidth onClick={handleClose}>
@@ -72,7 +72,7 @@ export const ReservationModal: React.FC = () => {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="text-xs text-stone-600">
-            Enjoy casual dining in Badangpet. Welcoming solo diners, families with children, and lively friend groups.
+            Enjoy casual dining in {RESTAURANT_INFO.address.locality}. Welcoming solo diners, families with children, and lively friend groups.
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

@@ -70,7 +70,7 @@ export default function ContactPage() {
                   {RESTAURANT_INFO.address.shop}, {RESTAURANT_INFO.address.street}
                 </p>
                 <p className="text-xs text-stone-500">
-                  {RESTAURANT_INFO.address.locality}, {RESTAURANT_INFO.address.state} {RESTAURANT_INFO.address.pincode}
+                  {RESTAURANT_INFO.address.locality}, {RESTAURANT_INFO.address.state} {RESTAURANT_INFO.address.postalCode}
                 </p>
                 <p className="text-xs text-stone-500 pt-1">
                   Landmark: {RESTAURANT_INFO.address.landmark}
