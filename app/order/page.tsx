@@ -5,10 +5,7 @@ import Link from 'next/link';
 import { ShoppingBag, CheckCircle2, Utensils, Clock, History, ArrowRight, Plus, Minus, CreditCard, QrCode, Banknote, ShieldCheck } from 'lucide-react';
 import { restaurantConfig } from '../../config/restaurant.config';
 import { formatPrice } from '../../lib/restaurantData';
-<<<<<<< HEAD
 import { formatOrderDate, formatOrderTime } from '../../lib/dateUtils';
-=======
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useCart } from '../../context/CartContext';
@@ -97,11 +94,7 @@ export default function OrderPage() {
   };
 
   return (
-<<<<<<< HEAD
     <div className="shell shell-safe-bottom py-8 sm:py-12 space-y-12">
-=======
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-12">
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
       {/* Page Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="text-xs font-semibold text-orange-700 uppercase tracking-wider">
@@ -180,13 +173,8 @@ export default function OrderPage() {
                         </span>
                       </div>
                       <div className="text-xs text-stone-500 mt-1">
-<<<<<<< HEAD
                         {formatOrderDate(order.createdAt)} at{' '}
                         {formatOrderTime(order.createdAt)}
-=======
-                        {new Date(order.createdAt).toLocaleDateString()} at{' '}
-                        {new Date(order.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
                       </div>
                     </div>
                     <div className="text-base font-bold text-stone-900 tabular-nums">
@@ -300,11 +288,7 @@ export default function OrderPage() {
                 </Link>
               </div>
 
-<<<<<<< HEAD
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-=======
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
                 {soloCombos.map((combo) => (
                   <Card key={combo.id} className="p-4 flex flex-col justify-between space-y-3">
                     <div className="space-y-1">

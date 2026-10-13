@@ -14,7 +14,6 @@
   --color-surface-card: #ffffff;
 }
 
-<<<<<<< HEAD
 /* Full-width page shell: content spans the entire viewport width.
    Horizontal padding provides the only gutter, so bands go edge-to-edge. */
 .shell {
@@ -52,8 +51,6 @@
   }
 }
 
-=======
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
 body {
   font-family: var(--font-sans);
   background-color: var(--color-surface-bg);

@@ -7,11 +7,7 @@ import { restaurantConfig } from '../config/restaurant.config';
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-stone-900 text-stone-300 pt-16 pb-12 border-t border-stone-800">
-<<<<<<< HEAD
       <div className="shell">
-=======
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 border-b border-stone-800">
           {/* Col 1: Brand & Identity */}
           <div className="space-y-4">

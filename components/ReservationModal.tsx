@@ -1,18 +1,11 @@
 'use client';
 
-<<<<<<< HEAD
 import React, { useEffect, useState } from 'react';
-=======
-import React, { useState } from 'react';
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
 import { Calendar, CheckCircle, Car } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { RESTAURANT_INFO } from '../lib/restaurantData';
-<<<<<<< HEAD
 import { getTodayISODate } from '../lib/dateUtils';
-=======
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
 import { useCart } from '../context/CartContext';
 
 export const ReservationModal: React.FC = () => {
@@ -20,15 +13,8 @@ export const ReservationModal: React.FC = () => {
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
-<<<<<<< HEAD
   // Resolved after mount so the server and client agree on the initial value.
   const [date, setDate] = useState('');
-=======
-  const [date, setDate] = useState(() => {
-    const today = new Date();
-    return today.toISOString().split('T')[0];
-  });
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
   const [mealType, setMealType] = useState<'Lunch' | 'Dinner'>('Dinner');
   const [partySize, setPartySize] = useState(2);
   const [preference, setPreference] = useState<'Solo Dining' | 'Group Gathering' | 'Family with Children'>('Group Gathering');
@@ -36,13 +22,10 @@ export const ReservationModal: React.FC = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingId, setBookingId] = useState('');
 
-<<<<<<< HEAD
   useEffect(() => {
     setDate(getTodayISODate());
   }, [isReservationOpen]);
 
-=======
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim() || !phone.trim()) return;

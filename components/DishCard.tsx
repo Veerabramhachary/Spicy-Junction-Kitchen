@@ -28,11 +28,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
               alt={dish.name}
               fill
               className="object-cover group-hover:scale-104 transition-transform duration-500"
-<<<<<<< HEAD
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 33vw, 25vw"
-=======
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
             />
             <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-xs px-2 py-0.5 rounded text-xs font-semibold text-stone-800 border border-stone-200">
               {dish.categoryLabel}

@@ -6,7 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
-<<<<<<< HEAD
 .next
-=======
->>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
+tsconfig.tsbuildinfo
