@@ -382,23 +382,29 @@ export const CartDrawer: React.FC = () => {
                 </div>
               </div>
 
-              <Button
-                variant="primary"
-                fullWidth
-                size="lg"
-                type="submit"
-                form="cart-drawer-form"
-                disabled={isSubmitting}
-              >
-                {isSubmitting ? (
-                  'Confirming Order...'
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    <span>Place {orderType} Order ({formatPrice(grandTotal)})</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </span>
-                )}
-              </Button>
+              <div className="space-y-2">
+                <Button
+                  variant="primary"
+                  fullWidth
+                  size="lg"
+                  type="submit"
+                  form="cart-drawer-form"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? (
+                    'Confirming Order...'
+                  ) : (
+                    <span className="flex items-center justify-center gap-2">
+                      <span>Confirm & Track ({formatPrice(grandTotal)})</span>
+                      <ArrowRight className="w-4 h-4" />
+                    </span>
+                  )}
+                </Button>
+
+                <p className="text-[11px] text-stone-500 text-center flex items-center justify-center gap-1">
+                  <span>Receipt includes 1-click WhatsApp bill sending</span>
+                </p>
+              </div>
             </div>
           )}
         </div>

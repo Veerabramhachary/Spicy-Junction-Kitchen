@@ -145,6 +145,7 @@ export default function HomePage() {
                                     alt={`${restaurantConfig.brand.name} culinary showcase`}
                                     fill
                                     priority
+                                    referrerPolicy="no-referrer"
                                     className="object-cover group-hover:scale-102 transition-transform duration-700"
                                     sizes="(max-width: 1024px) 100vw, 50vw"
                                 />
@@ -273,6 +274,7 @@ export default function HomePage() {
                                     src={RESTAURANT_IMAGES.atmosphere}
                                     alt={`${restaurantConfig.brand.name} dining ambiance`}
                                     fill
+                                    referrerPolicy="no-referrer"
                                     className="object-cover"
                                     sizes="(max-width: 1024px) 100vw, 50vw"
                                 />

@@ -26,8 +26,15 @@ const appUrl = process.env.APP_URL ? (process.env.APP_URL.startsWith('http') ? p
 
 export const metadata: Metadata = {
   metadataBase: new URL(appUrl),
-  title: `${restaurantConfig.brand.name} | ${restaurantConfig.brand.tagline}`,
+  title: {
+    default: `${restaurantConfig.brand.name} | ${restaurantConfig.brand.tagline}`,
+    template: `%s | ${restaurantConfig.brand.name}`,
+  },
   description: restaurantConfig.brand.description,
+  applicationName: restaurantConfig.brand.name,
+  alternates: {
+    canonical: '/',
+  },
   keywords: [
     restaurantConfig.brand.name,
     restaurantConfig.brand.cuisineType,
@@ -38,12 +45,17 @@ export const metadata: Metadata = {
     'Solo dining meal platters',
     'Hyderabad biryani takeaway',
     'Authentic dum handi',
+    'Almasguda Road restaurants',
+    'Badangpet food',
   ],
+  authors: [{ name: restaurantConfig.brand.name }],
   openGraph: {
     title: `${restaurantConfig.brand.name} | ${restaurantConfig.brand.tagline}`,
     description: restaurantConfig.brand.description,
     type: 'website',
+    url: appUrl,
     siteName: restaurantConfig.brand.name,
+    locale: 'en_IN',
     images: [
       {
         url: restaurantConfig.images.hero,
@@ -59,6 +71,17 @@ export const metadata: Metadata = {
     description: restaurantConfig.brand.description,
     images: [restaurantConfig.images.hero],
   },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -69,20 +92,63 @@ export default function RootLayout({
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Restaurant',
+    '@id': `${appUrl}/#restaurant`,
     name: restaurantConfig.brand.name,
+    description: restaurantConfig.brand.description,
+    url: appUrl,
+    telephone: restaurantConfig.contact.phone,
     servesCuisine: restaurantConfig.brand.cuisineType,
+    image: `${appUrl}${restaurantConfig.images.hero}`,
+    priceRange: '₹₹',
+    currenciesAccepted: restaurantConfig.currency.code,
+    paymentAccepted: 'Cash, UPI, Credit Card, Debit Card',
+    acceptsReservations: 'True',
+    menu: `${appUrl}/menu`,
+    hasMenu: `${appUrl}/menu`,
     address: {
       '@type': 'PostalAddress',
       streetAddress: `${restaurantConfig.address.shop}, ${restaurantConfig.address.street}`,
       addressLocality: restaurantConfig.address.locality,
       addressRegion: restaurantConfig.address.state,
       postalCode: restaurantConfig.address.postalCode,
-      addressCountry: restaurantConfig.address.country,
+      addressCountry: restaurantConfig.address.country === 'India' ? 'IN' : restaurantConfig.address.country,
     },
-    telephone: restaurantConfig.contact.phone,
-    priceRange: `${restaurantConfig.currency.symbol}${restaurantConfig.currency.symbol}`,
-    openingHours: ['Mo-Su 11:30-15:30', 'Mo-Su 19:00-23:30'],
-    hasMenu: '/menu',
+    geo: {
+      '@type': 'GeoCoordinates',
+      latitude: '17.3168',
+      longitude: '78.5302',
+    },
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '11:30',
+        closes: '15:30',
+      },
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '19:00',
+        closes: '23:30',
+      },
+    ],
+    potentialAction: [
+      {
+        '@type': 'OrderAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${appUrl}/order`,
+          actionPlatform: [
+            'http://schema.org/DesktopWebPlatform',
+            'http://schema.org/MobileWebPlatform',
+          ],
+        },
+        result: {
+          '@type': 'Order',
+          orderStatus: 'http://schema.org/OrderStatus/OrderProcessing',
+        },
+      },
+    ],
   };
 
   return (

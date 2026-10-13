@@ -27,6 +27,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
               src={dish.image}
               alt={dish.name}
               fill
+              referrerPolicy="no-referrer"
               className="object-cover group-hover:scale-104 transition-transform duration-500"
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, (max-width: 1536px) 33vw, 25vw"
             />

@@ -10,8 +10,30 @@ import { Button } from '../../components/ui/Button';
 import { ReserveTableButton } from '../../components/ReserveTableButton';
 
 export const metadata: Metadata = {
-  title: `Atmosphere & Heritage | ${restaurantConfig.brand.name}`,
-  description: `Experience casual dining, solo dining comfort, lively group tables, kid-friendly dining, and fresh culinary heritage at ${restaurantConfig.brand.name}.`,
+  title: `Atmosphere & Kitchen Heritage | ${restaurantConfig.brand.name}`,
+  description: `Experience casual dining, solo dining comfort, lively group tables, kid-friendly dining, and handi dum cooking heritage at ${restaurantConfig.brand.name}.`,
+  alternates: {
+    canonical: '/atmosphere',
+  },
+  openGraph: {
+    title: `Atmosphere & Kitchen Heritage | ${restaurantConfig.brand.name}`,
+    description: `Casual dining, solo dining comfort, and slow dum culinary heritage on Almasguda Road, Badangpet.`,
+    url: '/atmosphere',
+    images: [
+      {
+        url: RESTAURANT_IMAGES.atmosphere,
+        width: 1200,
+        height: 630,
+        alt: `${restaurantConfig.brand.name} interior dining ambiance`,
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: `Atmosphere & Heritage | ${restaurantConfig.brand.name}`,
+    description: `Casual dining, solo dining comfort, and slow dum culinary heritage.`,
+    images: [RESTAURANT_IMAGES.atmosphere],
+  },
 };
 
 export default function AtmospherePage() {
@@ -37,6 +59,7 @@ export default function AtmospherePage() {
             src={RESTAURANT_IMAGES.atmosphere}
             alt={`${restaurantConfig.brand.name} interior dining ambiance`}
             fill
+            referrerPolicy="no-referrer"
             className="object-cover"
             sizes="(max-width: 1200px) 100vw, 1200px"
           />

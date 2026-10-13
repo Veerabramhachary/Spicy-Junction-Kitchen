@@ -497,4 +497,27 @@ export const restaurantConfig: RestaurantConfig = {
         'Solo dining is one of our most popular offerings! We offer complete single-portion biryani meal platters with sides and quick bites so you do not need to order a massive family handi just for yourself.',
     },
   ],
+
+  /**
+   * ==============================================================================
+   * INTEGRATIONS & DISPATCH CONFIGURATION
+   * ==============================================================================
+   * Connect your restaurant orders and table bookings to real communication channels:
+   * 1. WhatsApp: Direct wa.me link generated with pre-formatted bill & customer info
+   * 2. Google Sheets: Plug in your free Google Apps Script web app URL
+   * 3. Custom Webhook: Plug in Zapier, Make, n8n, Formspree or your own API endpoint
+   * 4. Email: Send notifications through an inbox dispatcher
+   * ==============================================================================
+   */
+  integrations: {
+    whatsappOrders: {
+      enabled: true,
+      phoneNumber: '919849281734',
+      promptDirectOpen: true,
+    },
+    // Optional: paste your Google Apps Script Web App URL or Formspree endpoint below
+    googleSheetWebhookUrl: '',
+    webhookUrl: '',
+    notificationEmail: 'hello@spicyandhotjunctionkitchen.in',
+  },
 };

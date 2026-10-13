@@ -1,10 +1,11 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, Clock, MapPin, Printer, MessageCircle, X, ChevronRight, Phone } from 'lucide-react';
+import { CheckCircle2, Clock, MapPin, Printer, MessageCircle, X, ChevronRight, Phone, Send, ExternalLink } from 'lucide-react';
 import { OrderRecord } from '../types/restaurant';
 import { restaurantConfig } from '../config/restaurant.config';
 import { formatPrice } from '../lib/restaurantData';
+import { buildWhatsAppOrderUrl } from '../lib/orderDispatcher';
 import { Button } from './ui/Button';
 
 interface OrderReceiptModalProps {
@@ -24,36 +25,7 @@ export const OrderReceiptModal: React.FC<OrderReceiptModalProps> = ({
     window.print();
   };
 
-  const generateWhatsAppUrl = () => {
-    const itemLines = order.items
-      .map(
-        (ci) =>
-          `• ${ci.quantity}x ${ci.item.name} (${formatPrice(ci.item.price * ci.quantity)})${
-            ci.specialInstructions ? ` [Note: ${ci.specialInstructions}]` : ''
-          }`
-      )
-      .join('\n');
-
-    const msg = `*Order #${order.id} - ${restaurantConfig.brand.name}*\n` +
-      `--------------------------------\n` +
-      `*Type:* ${order.serviceOption}\n` +
-      `*Time:* ${order.fulfillmentTime}\n` +
-      `*Customer:* ${order.customer.name} (${order.customer.phone})\n` +
-      (order.customer.tableNumber ? `*Table:* ${order.customer.tableNumber}\n` : '') +
-      (order.customer.deliveryAddress ? `*Address:* ${order.customer.deliveryAddress}\n` : '') +
-      `--------------------------------\n` +
-      `*Items:*\n${itemLines}\n` +
-      `--------------------------------\n` +
-      `*Subtotal:* ${formatPrice(order.subtotal)}\n` +
-      (order.packagingFee > 0 ? `*Packaging:* ${formatPrice(order.packagingFee)}\n` : '') +
-      (order.taxAmount > 0 ? `*Tax:* ${formatPrice(order.taxAmount)}\n` : '') +
-      `*Grand Total:* ${formatPrice(order.total)}\n` +
-      `*Payment:* ${order.paymentMethod.replace('_', ' ').toUpperCase()} (${order.paymentStatus})\n` +
-      (order.customer.notes ? `*Special Instructions:* ${order.customer.notes}\n` : '') +
-      `Pickup Location: ${restaurantConfig.address.shop}, ${restaurantConfig.address.locality}`;
-
-    return `https://wa.me/${restaurantConfig.contact.whatsapp}?text=${encodeURIComponent(msg)}`;
-  };
+  const whatsAppUrl = buildWhatsAppOrderUrl(order);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in duration-150 print:p-0 print:bg-white">
@@ -137,6 +109,34 @@ export const OrderReceiptModal: React.FC<OrderReceiptModalProps> = ({
             </div>
           </div>
 
+          {/* Prominent WhatsApp Dispatch Card */}
+          <div className="bg-emerald-50 border-2 border-emerald-500/40 rounded-2xl p-4.5 space-y-3">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0 shadow-xs">
+                <MessageCircle className="w-5 h-5" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-sm font-bold text-emerald-950">
+                  Send Order to Restaurant WhatsApp
+                </h3>
+                <p className="text-xs text-emerald-800 leading-relaxed mt-0.5">
+                  Sends your itemized bill, contact details, and pickup slot directly to our kitchen staff for instant confirmation.
+                </p>
+              </div>
+            </div>
+
+            <a
+              href={whatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-sm active:scale-[0.99]"
+            >
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span>Open in WhatsApp (Pre-Filled Bill)</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+            </a>
+          </div>
+
           {/* Itemized Bill Table */}
           <div className="space-y-3">
             <div className="text-xs font-bold uppercase tracking-wider text-stone-600 flex justify-between border-b border-stone-200 pb-1.5">
@@ -216,12 +216,12 @@ export const OrderReceiptModal: React.FC<OrderReceiptModalProps> = ({
         <div className="p-5 border-t border-stone-200 bg-stone-50/70 flex flex-col sm:flex-row items-center justify-between gap-3 print:hidden">
           <div className="flex items-center gap-2 w-full sm:w-auto">
             <a
-              href={generateWhatsAppUrl()}
+              href={whatsAppUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"
+              className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-bold text-white bg-emerald-600 hover:bg-emerald-700 rounded-lg shadow-xs transition-colors"
             >
-              <MessageCircle className="w-4 h-4" />
+              <MessageCircle className="w-4 h-4 fill-current" />
               <span>Send to WhatsApp</span>
             </a>
 

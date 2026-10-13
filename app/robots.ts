@@ -1,14 +1,15 @@
 import { MetadataRoute } from 'next';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.APP_URL || 'http://localhost:3000';
+  const rawUrl = process.env.APP_URL || 'http://localhost:3000';
+  const baseUrl = (rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`).replace(/\/$/, '');
 
   return {
     rules: {
       userAgent: '*',
       allow: '/',
-      disallow: '/private/',
+      disallow: ['/api/', '/private/'],
     },
-    sitemap: `${baseUrl.replace(/\/$/, '')}/sitemap.xml`,
+    sitemap: `${baseUrl}/sitemap.xml`,
   };
 }

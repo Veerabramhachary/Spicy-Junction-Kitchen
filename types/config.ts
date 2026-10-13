@@ -115,6 +115,16 @@ export interface RestaurantConfig {
     question: string;
     answer: string;
   }[];
+  integrations?: {
+    whatsappOrders?: {
+      enabled: boolean;
+      phoneNumber: string; // international digits only, e.g. '919849281734'
+      promptDirectOpen?: boolean;
+    };
+    webhookUrl?: string; // Optional custom webhook (e.g., Zapier, Make, Formspree, n8n)
+    googleSheetWebhookUrl?: string; // Optional Google Apps Script web app URL for instant sheet append
+    notificationEmail?: string; // Optional email recipient (e.g. via Formspree/Resend/EmailJS)
+  };
   socialLinks?: {
     instagram?: string;
     facebook?: string;

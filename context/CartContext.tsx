@@ -183,6 +183,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setOrderHistory((prev) => [newRecord, ...prev]);
     setActiveOrder(newRecord);
     clearCart();
+
+    // Asynchronously dispatch notification to configured channels (API route, sheets, webhooks)
+    if (typeof window !== 'undefined') {
+      import('../lib/orderDispatcher').then(({ dispatchOrderNotification }) => {
+        dispatchOrderNotification(newRecord).catch(() => {});
+      });
+    }
+
     return newRecord;
   };
 

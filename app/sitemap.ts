@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = (process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
+  const rawUrl = process.env.APP_URL || 'http://localhost:3000';
+  const baseUrl = (rawUrl.startsWith('http') ? rawUrl : `https://${rawUrl}`).replace(/\/$/, '');
   const now = new Date();
 
   return [

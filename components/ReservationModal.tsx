@@ -1,12 +1,14 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Calendar, CheckCircle, Car } from 'lucide-react';
+import { Calendar, CheckCircle, Car, MessageCircle, ExternalLink, Send } from 'lucide-react';
 import { Modal } from './ui/Modal';
 import { Button } from './ui/Button';
 import { RESTAURANT_INFO } from '../lib/restaurantData';
 import { getTodayISODate } from '../lib/dateUtils';
 import { useCart } from '../context/CartContext';
+import { TableBooking } from '../types/restaurant';
+import { buildWhatsAppBookingUrl, dispatchBookingNotification } from '../lib/orderDispatcher';
 
 export const ReservationModal: React.FC = () => {
   const { isReservationOpen, setIsReservationOpen } = useCart();
@@ -21,6 +23,7 @@ export const ReservationModal: React.FC = () => {
   const [notes, setNotes] = useState('');
   const [isSuccess, setIsSuccess] = useState(false);
   const [bookingId, setBookingId] = useState('');
+  const [currentBooking, setCurrentBooking] = useState<TableBooking | null>(null);
 
   useEffect(() => {
     setDate(getTodayISODate());
@@ -32,13 +35,34 @@ export const ReservationModal: React.FC = () => {
 
     const id = `SJK-RES-${Math.floor(100 + Math.random() * 900)}`;
     setBookingId(id);
+
+    const bookingPayload: TableBooking = {
+      id,
+      name: name.trim(),
+      phone: phone.trim(),
+      date,
+      timeSlot: mealType === 'Lunch' ? 'Lunch (11:30 AM - 3:30 PM)' : 'Dinner (7:00 PM - 11:30 PM)',
+      mealType,
+      partySize,
+      diningPreference: preference,
+      specialRequests: notes.trim() || undefined,
+      createdAt: new Date().toISOString(),
+    };
+
+    setCurrentBooking(bookingPayload);
     setIsSuccess(true);
+
+    // Asynchronously dispatch notification
+    dispatchBookingNotification(bookingPayload).catch(() => {});
   };
 
   const handleClose = () => {
     setIsReservationOpen(false);
     setIsSuccess(false);
+    setCurrentBooking(null);
   };
+
+  const bookingWhatsAppUrl = currentBooking ? buildWhatsAppBookingUrl(currentBooking) : '';
 
   return (
     <Modal
@@ -47,8 +71,8 @@ export const ReservationModal: React.FC = () => {
       title={`Reserve a Table at ${RESTAURANT_INFO.shortName}`}
       maxWidth="md"
     >
-      {isSuccess ? (
-        <div className="py-6 text-center space-y-4">
+      {isSuccess && currentBooking ? (
+        <div className="py-4 text-center space-y-4">
           <div className="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto">
             <CheckCircle className="w-7 h-7" />
           </div>
@@ -58,6 +82,28 @@ export const ReservationModal: React.FC = () => {
           <p className="text-sm text-stone-600 max-w-sm mx-auto">
             Thank you, <strong className="text-stone-900">{name}</strong>. Your reservation number is <strong className="text-stone-900">{bookingId}</strong> for {partySize} guests ({mealType}).
           </p>
+
+          {/* WhatsApp Direct Action Button */}
+          <div className="bg-emerald-50 border border-emerald-300 rounded-2xl p-4 text-left space-y-2.5">
+            <div className="flex items-center gap-2 text-emerald-900 font-bold text-xs uppercase tracking-wider">
+              <MessageCircle className="w-4 h-4 text-emerald-600" />
+              <span>Instant WhatsApp Confirmation</span>
+            </div>
+            <p className="text-xs text-emerald-800">
+              Click below to send your table reservation request directly to our staff on WhatsApp for instant seating confirmation.
+            </p>
+            <a
+              href={bookingWhatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-xl transition-all shadow-xs"
+            >
+              <MessageCircle className="w-4 h-4 fill-current" />
+              <span>Send Reservation to WhatsApp</span>
+              <ExternalLink className="w-3.5 h-3.5 opacity-80" />
+            </a>
+          </div>
+
           <div className="p-3.5 bg-stone-50 rounded-xl border border-stone-200 text-xs text-stone-600 text-left space-y-1.5">
             <div className="flex items-center gap-2 text-stone-900 font-medium">
               <Calendar className="w-4 h-4 text-orange-600" />
