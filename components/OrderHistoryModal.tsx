@@ -5,7 +5,10 @@ import { Clock, ShoppingBag, X, ChevronRight, CheckCircle2 } from 'lucide-react'
 import { useCart } from '../context/CartContext';
 import { OrderRecord } from '../types/restaurant';
 import { formatPrice } from '../lib/restaurantData';
+<<<<<<< HEAD
 import { formatOrderDate } from '../lib/dateUtils';
+=======
+>>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
 import { Button } from './ui/Button';
 
 interface OrderHistoryModalProps {
@@ -72,7 +75,11 @@ export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({
                     </span>
                   </div>
                   <span className="text-xs text-stone-400 tabular-nums">
+<<<<<<< HEAD
                     {formatOrderDate(order.createdAt)}
+=======
+                    {new Date(order.createdAt).toLocaleDateString()}
+>>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
                   </span>
                 </div>
 

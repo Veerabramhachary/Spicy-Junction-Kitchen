@@ -152,7 +152,11 @@ export const MenuClient: React.FC = () => {
           </Button>
         </div>
       ) : (
+<<<<<<< HEAD
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+=======
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+>>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
           {filteredItems.map((dish) => (
             <DishCard key={dish.id} dish={dish} />
           ))}

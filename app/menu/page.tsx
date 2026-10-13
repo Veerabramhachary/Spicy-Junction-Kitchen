@@ -10,7 +10,11 @@ export const metadata: Metadata = {
 
 export default function MenuPage() {
   return (
+<<<<<<< HEAD
     <div className="shell shell-safe-bottom py-8 sm:py-12 space-y-10">
+=======
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+>>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
       {/* Page Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="text-xs font-semibold text-orange-700 uppercase tracking-wider">

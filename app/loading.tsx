@@ -2,7 +2,11 @@ import React from 'react';
 
 export default function Loading() {
   return (
+<<<<<<< HEAD
     <div className="shell py-12 space-y-8 animate-pulse">
+=======
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-8 animate-pulse">
+>>>>>>> cfd262b4b3de7e01126dc556d5bc97fc881042bb
       <div className="h-10 bg-stone-200/80 rounded-xl w-1/3 mx-auto" />
       <div className="h-4 bg-stone-200/60 rounded-md w-1/2 mx-auto" />
 
