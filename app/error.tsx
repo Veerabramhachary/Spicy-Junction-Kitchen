@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { AlertCircle, RotateCcw, Home } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { logger } from '../lib/logger';
 
 export default function GlobalError({
   error,
@@ -14,7 +15,8 @@ export default function GlobalError({
 }) {
   useEffect(() => {
     // Log error cleanly
-    console.error('Application runtime error:', error);
+    // `logger.error` always emits - a boundary hit is never routine.
+    logger.error('Application runtime error:', error);
   }, [error]);
 
   return (

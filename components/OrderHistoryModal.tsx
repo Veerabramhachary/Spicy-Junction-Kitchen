@@ -1,25 +1,31 @@
 'use client';
 
 import React from 'react';
-import { Clock, ShoppingBag, X, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Clock, ShoppingBag, X, ChevronRight, CheckCircle2, RotateCcw } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { OrderRecord } from '../types/restaurant';
 import { formatPrice } from '../lib/restaurantData';
 import { formatOrderDate } from '../lib/dateUtils';
+import { useEscapeKey } from '../lib/useEscapeKey';
 import { Button } from './ui/Button';
 
 interface OrderHistoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSelectOrder: (order: OrderRecord) => void;
+  /** Shown in the empty state so the user is not stranded. */
+  onStartOrder?: () => void;
 }
 
 export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({
   isOpen,
   onClose,
   onSelectOrder,
+  onStartOrder,
 }) => {
   const { orderHistory, addToCart } = useCart();
+
+  useEscapeKey(isOpen, onClose);
 
   if (!isOpen) return null;
 
@@ -27,17 +33,22 @@ export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-900/60 backdrop-blur-xs animate-in fade-in duration-150">
       <div className="fixed inset-0" onClick={onClose} aria-hidden="true" />
 
-      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden z-10 max-h-[85vh] flex flex-col">
+      <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl border border-stone-200 overflow-hidden z-10 max-h-[85vh] flex flex-col"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="order-history-headline"
+        >
         {/* Header */}
         <div className="p-5 border-b border-stone-200 flex items-center justify-between bg-stone-50/80">
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-orange-600" />
-            <h3 className="text-base font-bold font-display text-stone-900">
+            <h3 id="order-history-headline" className="text-base font-bold font-display text-stone-900">
               Your Order History ({orderHistory.length})
             </h3>
           </div>
           <button
             onClick={onClose}
+            aria-label="Close order history"
             className="p-1.5 text-stone-400 hover:text-stone-700 hover:bg-stone-200/60 rounded-lg transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -55,6 +66,14 @@ export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({
               <p className="text-xs text-stone-500 max-w-xs mx-auto">
                 Orders you place on this device will appear here so you can easily track receipts or repeat your favorite dishes.
               </p>
+              {onStartOrder && (
+                <div className="pt-2">
+                  <Button variant="primary" size="sm" onClick={onStartOrder}>
+                    <RotateCcw className="w-3.5 h-3.5 mr-1" />
+                    <span>Start Your First Order</span>
+                  </Button>
+                </div>
+              )}
             </div>
           ) : (
             orderHistory.map((order) => (
@@ -88,10 +107,18 @@ export const OrderHistoryModal: React.FC<OrderHistoryModalProps> = ({
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => {
-                        // Re-order: add all items to cart
-                        order.items.forEach((ci) => addToCart(ci.item));
+                        // Re-order. `addToCart` increments by one per call, so
+                        // a line with quantity 3 must be added three times -
+                        // the previous version added each line exactly once, so
+                        // re-ordering a 2x order silently halved it.
+                        order.items.forEach((ci) => {
+                          for (let n = 0; n < ci.quantity; n++) {
+                            addToCart(ci.item, ci.specialInstructions);
+                          }
+                        });
                         onClose();
                       }}
+                      aria-label={`Re-order order ${order.id}`}
                       className="px-2.5 py-1 text-xs font-medium text-stone-700 bg-stone-100 hover:bg-stone-200 rounded-lg transition-colors cursor-pointer"
                     >
                       Re-order

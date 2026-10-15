@@ -5,11 +5,13 @@ import Link from 'next/link';
 import { ShoppingBag, CheckCircle2, Utensils, Clock, History, ArrowRight, Plus, Minus, CreditCard, QrCode, Banknote, ShieldCheck, MessageCircle, ExternalLink } from 'lucide-react';
 import { restaurantConfig } from '../../config/restaurant.config';
 import { formatPrice } from '../../lib/restaurantData';
+import { UPI_ID } from '../../lib/contact';
 import { formatOrderDate, formatOrderTime } from '../../lib/dateUtils';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { useCart } from '../../context/CartContext';
 import { OrderRecord } from '../../types/restaurant';
+import { OrderHistoryModal } from '../../components/OrderHistoryModal';
 
 export default function OrderPageClient() {
   const {
@@ -140,78 +142,16 @@ export default function OrderPageClient() {
       </div>
 
       {activeTab === 'history' ? (
-        /* Order History View */
-        <div className="space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold font-display text-stone-900">
-              Your Past Orders & Receipts
-            </h2>
-            <span className="text-xs text-stone-500">Stored safely on this device</span>
-          </div>
-
-          {orderHistory.length === 0 ? (
-            <div className="py-20 text-center space-y-3 bg-white rounded-3xl border border-stone-200">
-              <ShoppingBag className="w-12 h-12 text-stone-300 mx-auto" />
-              <h3 className="text-base font-bold text-stone-800">No past orders found</h3>
-              <p className="text-xs text-stone-500 max-w-sm mx-auto">
-                Orders you place on this device will appear here with live tracking, downloadable bills, and quick re-ordering.
-              </p>
-              <Button variant="primary" size="sm" onClick={() => setActiveTab('build')}>
-                Start Your First Order
-              </Button>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {orderHistory.map((order) => (
-                <Card key={order.id} className="p-5 space-y-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm font-bold text-stone-900">#{order.id}</span>
-                        <span className="text-[11px] font-semibold text-orange-700 bg-orange-50 px-2 py-0.5 rounded border border-orange-200">
-                          {order.serviceOption}
-                        </span>
-                      </div>
-                      <div className="text-xs text-stone-500 mt-1">
-                        {formatOrderDate(order.createdAt)} at{' '}
-                        {formatOrderTime(order.createdAt)}
-                      </div>
-                    </div>
-                    <div className="text-base font-bold text-stone-900 tabular-nums">
-                      {formatPrice(order.total)}
-                    </div>
-                  </div>
-
-                  <div className="space-y-1 text-xs text-stone-600 bg-stone-50 p-3 rounded-xl border border-stone-200/80">
-                    {order.items.map((ci, idx) => (
-                      <div key={idx} className="flex justify-between">
-                        <span>{ci.quantity}x {ci.item.name}</span>
-                        <span className="tabular-nums font-medium text-stone-800">
-                          {formatPrice(ci.item.price * ci.quantity)}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="flex items-center justify-between pt-2 border-t border-stone-100 text-xs">
-                    <span className="text-emerald-700 font-semibold flex items-center gap-1">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      <span>{order.status === 'confirmed' ? 'Kitchen Received' : order.status}</span>
-                    </span>
-
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => setActiveOrder(order)}
-                    >
-                      View Live Receipt
-                    </Button>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+        /* Order History View - delegates to the shared OrderHistoryModal, which
+           also offers Re-order. This page previously carried its own duplicated
+           inline list with no re-order action, and OrderHistoryModal was dead
+           code that nothing imported. */
+        <OrderHistoryModal
+          isOpen={true}
+          onClose={() => setActiveTab('build')}
+          onSelectOrder={(order) => setActiveOrder(order)}
+          onStartOrder={() => setActiveTab('build')}
+        />
       ) : (
         /* Create Order Main Flow */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -325,8 +265,11 @@ export default function OrderPageClient() {
               <h3 className="text-lg font-bold font-display text-stone-900">
                 Crispy Small Plates & Quick Bites
               </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {quickBites.slice(0, 3).map((qb) => (
+              {/* All configured quick bites render. Previously `.slice(0, 3)` silently hid
+                two of the five, so dishes that exist on /menu could not be
+                added from the order page. */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {quickBites.map((qb) => (
                   <div
                     key={qb.id}
                     className="p-3.5 bg-white rounded-xl border border-stone-200 flex flex-col justify-between space-y-2 shadow-2xs"
@@ -404,6 +347,7 @@ export default function OrderPageClient() {
                           <div className="flex items-center border border-stone-300 rounded-lg bg-white overflow-hidden">
                             <button
                               onClick={() => updateQuantity(item.id, -1)}
+                              aria-label={`Decrease quantity of ${item.name}`}
                               className="p-1 hover:bg-stone-100 text-stone-600"
                             >
                               <Minus className="w-3 h-3" />
@@ -413,6 +357,7 @@ export default function OrderPageClient() {
                             </span>
                             <button
                               onClick={() => updateQuantity(item.id, 1)}
+                              aria-label={`Increase quantity of ${item.name}`}
                               className="p-1 hover:bg-stone-100 text-stone-600"
                             >
                               <Plus className="w-3 h-3" />
@@ -435,7 +380,10 @@ export default function OrderPageClient() {
               )}
 
               {/* Checkout Form */}
-              <form onSubmit={handleOrderSubmit} className="space-y-4 pt-2 border-t border-stone-200">
+              {/* `noValidate` lets `handleOrderSubmit` run so the styled "Note:" error
+                  below is reachable; the `required` attributes stay for semantics
+                  and mobile keyboard hints. */}
+                  <form onSubmit={handleOrderSubmit} noValidate className="space-y-4 pt-2 border-t border-stone-200">
                 <div className="text-xs font-bold uppercase tracking-wider text-stone-600">
                   Customer & Schedule Details
                 </div>
@@ -455,7 +403,20 @@ export default function OrderPageClient() {
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                      <label className="block text-xs font-medium text-stone-700 mb-1">
+                        Email (Optional)
+                      </label>
+                      <input
+                        type="email"
+                        value={customerEmail}
+                        onChange={(e) => setCustomerEmail(e.target.value)}
+                        placeholder="For order updates (e.g. ramesh@example.com)"
+                        className="w-full px-3 py-2 text-sm rounded-lg border border-stone-300 focus:outline-none focus:ring-2 focus:ring-orange-500/20 focus:border-orange-500"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="block text-xs font-medium text-stone-700 mb-1">
                         Phone Number *
@@ -642,7 +603,7 @@ export default function OrderPageClient() {
             <div className="w-48 h-48 bg-stone-100 mx-auto rounded-2xl border border-stone-200 p-4 flex flex-col items-center justify-center relative">
               <QrCode className="w-32 h-32 text-stone-800" />
               <div className="text-[10px] font-mono text-stone-500 mt-1">
-                UPI ID: {restaurantConfig.contact.whatsapp}@upi
+                UPI ID: {UPI_ID}
               </div>
             </div>
 

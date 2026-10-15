@@ -305,7 +305,7 @@ export default function HomePage() {
                             right outside.
                         </p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex flex-wrap items-center justify-center gap-3 md:justify-end md:shrink-0">
                         <Link href="/contact">
                             <Button variant="primary" size="lg">
                                 Get Directions & Map

@@ -1,11 +1,12 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle2, Clock, MapPin, Printer, MessageCircle, X, ChevronRight, Phone, Send, ExternalLink } from 'lucide-react';
+import { CheckCircle2, Clock, MapPin, Printer, MessageCircle, X, ChevronRight, Phone, Send, ExternalLink, ShieldCheck, Banknote } from 'lucide-react';
 import { OrderRecord } from '../types/restaurant';
 import { restaurantConfig } from '../config/restaurant.config';
 import { formatPrice } from '../lib/restaurantData';
 import { buildWhatsAppOrderUrl } from '../lib/orderDispatcher';
+import { useEscapeKey } from '../lib/useEscapeKey';
 import { Button } from './ui/Button';
 
 interface OrderReceiptModalProps {
@@ -19,6 +20,8 @@ export const OrderReceiptModal: React.FC<OrderReceiptModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  useEscapeKey(isOpen, onClose);
+
   if (!isOpen || !order) return null;
 
   const handlePrint = () => {
@@ -105,6 +108,38 @@ export const OrderReceiptModal: React.FC<OrderReceiptModalProps> = ({
               </div>
               <div className="text-[11px] text-stone-500">
                 Type: <strong>{order.serviceOption}</strong>
+              </div>
+            </div>
+
+            {/* Payment status - previously only encoded inside the WhatsApp link,
+                so a customer who paid via UPI saw no confirmation they had paid. */}
+            <div className="flex items-center justify-between text-xs pt-1 border-t border-stone-200/60">
+              <div className="flex items-center gap-1.5">
+                {order.paymentStatus === 'paid' ? (
+                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+                ) : (
+                  <Banknote className="w-3.5 h-3.5 text-stone-500" />
+                )}
+                <span className="text-stone-600">
+                  Payment:{' '}
+                  <strong
+                    className={
+                      order.paymentStatus === 'paid'
+                        ? 'text-emerald-700'
+                        : 'text-stone-900'
+                    }
+                  >
+                    {order.paymentStatus === 'paid'
+                      ? 'PAID'
+                      : 'Pay on arrival'}
+                  </strong>
+                </span>
+              </div>
+              <div className="text-[11px] text-stone-500">
+                Method:{' '}
+                <strong className="text-stone-700 uppercase">
+                  {order.paymentMethod.replace(/_/g, ' ')}
+                </strong>
               </div>
             </div>
           </div>

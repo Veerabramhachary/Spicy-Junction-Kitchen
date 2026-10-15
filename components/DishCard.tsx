@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { ShoppingBag } from 'lucide-react';
 import { MenuItem } from '../types/restaurant';
-import { formatPrice } from '../lib/restaurantData';
+import { formatPrice, DIETARY_META } from '../lib/restaurantData';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
 import { useCart } from '../context/CartContext';
@@ -51,12 +51,8 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-1.5 flex-1 min-w-0">
               <span
-                className={`w-2.5 h-2.5 rounded-xs shrink-0 ${
-                  dish.dietary === 'veg'
-                    ? 'bg-emerald-600 ring-2 ring-emerald-600/20'
-                    : 'bg-rose-600 ring-2 ring-rose-600/20'
-                }`}
-                title={dish.dietary === 'veg' ? 'Vegetarian' : 'Non-Vegetarian'}
+                className={`w-2.5 h-2.5 rounded-xs shrink-0 ${DIETARY_META[dish.dietary].dot}`}
+                title={DIETARY_META[dish.dietary].label}
               />
               <h3 className="text-base font-bold text-stone-900 group-hover:text-orange-600 transition-colors truncate">
                 {dish.name}
@@ -104,7 +100,7 @@ export const DishCard: React.FC<DishCardProps> = ({ dish }) => {
           <span>
             {quantityInCart > 0
               ? `Add Another (In Bag: ${quantityInCart})`
-              : `Add to Order · ₹${dish.price}`}
+              : `Add to Order · ${formatPrice(dish.price)}`}
           </span>
         </Button>
       </div>

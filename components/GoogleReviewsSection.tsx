@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Star, ExternalLink, MessageSquarePlus, CheckCircle2, ShieldCheck, Copy, Check } from 'lucide-react';
 import { RESTAURANT_INFO, REVIEWS as INITIAL_REVIEWS } from '../lib/restaurantData';
+import { useEscapeKey } from '../lib/useEscapeKey';
 import { ReviewItem } from '../types/restaurant';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
@@ -32,6 +33,10 @@ export const GoogleReviewsSection: React.FC = () => {
       // localStorage fallback
     }
   }, []);
+
+  const closeReviewModal = useCallback(() => setShowAddReviewModal(false), []);
+
+  useEscapeKey(showAddReviewModal, closeReviewModal);
 
   const handleManualReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();

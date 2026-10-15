@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import React from 'react';
 import { MapPin, Phone, Clock, Car, Navigation, CheckCircle2 } from 'lucide-react';
 import { restaurantConfig } from '../../config/restaurant.config';
+import { TEL_HREF } from '../../lib/contact';
 import { Card } from '../../components/ui/Card';
 import { ContactClient } from './ContactClient';
 import { GoogleReviewsSection } from '../../components/GoogleReviewsSection';
@@ -165,7 +166,7 @@ export default function ContactPage() {
                   Direct Kitchen Helplines
                 </h3>
                 <div className="text-sm font-semibold text-stone-900">
-                  <a href={`tel:${restaurantConfig.contact.phone}`} className="hover:text-orange-600 transition-colors tabular-nums">
+                  <a href={`tel:${TEL_HREF}`} className="hover:text-orange-600 transition-colors tabular-nums">
                     {restaurantConfig.contact.phone}
                   </a>
                 </div>

@@ -1,4 +1,5 @@
 import { restaurantConfig } from '../config/restaurant.config';
+import { DietaryType } from '../types/restaurant';
 export { restaurantConfig };
 
 export const RESTAURANT_INFO = {
@@ -48,3 +49,18 @@ export function formatPrice(amount: number): string {
   }
   return `${symbol}${amount}`;
 }
+
+/**
+ * Dietary indicator colour and accessible label.
+ *
+ * Previously each component branched on `dietary === 'veg'` and fell through
+ * to the red non-veg dot for everything else, so `egg` and `vegan` dishes were
+ * both mislabelled as non-vegetarian. Egg now gets its own amber indicator,
+ * which is the conventional marking in Indian food labelling.
+ */
+export const DIETARY_META: Record<DietaryType, { label: string; dot: string }> = {
+  veg: { label: 'Vegetarian', dot: 'bg-emerald-600 ring-emerald-600/20' },
+  vegan: { label: 'Vegan', dot: 'bg-emerald-600 ring-emerald-600/20' },
+  egg: { label: 'Contains Egg', dot: 'bg-amber-500 ring-amber-500/20' },
+  'non-veg': { label: 'Non-Vegetarian', dot: 'bg-rose-600 ring-rose-600/20' },
+};

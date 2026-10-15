@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { MapPin, Phone, Clock, Car, Users, Utensils, Heart, Shield } from 'lucide-react';
 import { RESTAURANT_INFO } from '../lib/restaurantData';
+import { TEL_HREF } from '../lib/contact';
 import { restaurantConfig } from '../config/restaurant.config';
 
 export const Footer: React.FC = () => {
@@ -87,7 +88,7 @@ export const Footer: React.FC = () => {
               </p>
               <p className="flex items-center gap-2.5">
                 <Phone className="w-4 h-4 text-orange-400 shrink-0" />
-                <a href={`tel:${RESTAURANT_INFO.contact.phone}`} className="hover:text-white transition-colors tabular-nums">
+                <a href={`tel:${TEL_HREF}`} className="hover:text-white transition-colors tabular-nums">
                   {RESTAURANT_INFO.contact.phone}
                 </a>
               </p>

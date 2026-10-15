@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { Navigation, MessageCircle, Calendar } from 'lucide-react';
 import { RESTAURANT_INFO } from '../../lib/restaurantData';
+import { buildWhatsAppLink } from '../../lib/contact';
 import { Button } from '../../components/ui/Button';
 import { useCart } from '../../context/CartContext';
 
@@ -40,7 +41,9 @@ export const ContactClient: React.FC = () => {
 
       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-stone-100">
         <a
-          href={`https://wa.me/${RESTAURANT_INFO.contact.whatsapp}?text=${encodeURIComponent('Hi Spicy Junction Kitchen, I would like to inquire about today menu and table availability.')}`}
+          href={buildWhatsAppLink(
+            'Hi Spicy Junction Kitchen, I would like to inquire about today menu and table availability.'
+          )}
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"

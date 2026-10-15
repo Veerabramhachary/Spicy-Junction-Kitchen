@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import { ShoppingBag, Utensils, Phone, Calendar } from 'lucide-react';
 import { useCart } from '../context/CartContext';
-import { RESTAURANT_INFO } from '../lib/restaurantData';
+import { TEL_HREF } from '../lib/contact';
 
 export const MobileActionBar: React.FC = () => {
   const { itemCount, setIsCartOpen, setIsReservationOpen } = useCart();
@@ -28,7 +28,7 @@ export const MobileActionBar: React.FC = () => {
       </button>
 
       <a
-        href={`tel:${RESTAURANT_INFO.contact.phone}`}
+        href={`tel:${TEL_HREF}`}
         className="flex-1 flex flex-col items-center justify-center text-xs font-semibold text-stone-700 py-1 hover:text-orange-600"
       >
         <Phone className="w-4 h-4 mb-0.5 text-stone-600" />

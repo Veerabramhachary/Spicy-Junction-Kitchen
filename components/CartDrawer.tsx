@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { X, Plus, Minus, ShoppingBag, ArrowRight, MapPin, Clock, MessageSquare, History } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { restaurantConfig } from '../config/restaurant.config';
-import { formatPrice } from '../lib/restaurantData';
+import { formatPrice, DIETARY_META } from '../lib/restaurantData';
+import { useEscapeKey } from '../lib/useEscapeKey';
 import { Button } from './ui/Button';
 
 export const CartDrawer: React.FC = () => {
@@ -34,6 +35,11 @@ export const CartDrawer: React.FC = () => {
   const [itemNoteText, setItemNoteText] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  const closeCart = useCallback(() => setIsCartOpen(false), [setIsCartOpen]);
+
+  // Registered before the early return below so the hook order stays stable.
+  useEscapeKey(isCartOpen, closeCart);
 
   if (!isCartOpen) return null;
 
@@ -165,12 +171,8 @@ export const CartDrawer: React.FC = () => {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-1.5">
                               <span
-                                className={`w-2 h-2 rounded-xs shrink-0 ${
-                                  item.dietary === 'veg'
-                                    ? 'bg-emerald-600 ring-2 ring-emerald-600/20'
-                                    : 'bg-rose-600 ring-2 ring-rose-600/20'
-                                }`}
-                                title={item.dietary === 'veg' ? 'Vegetarian' : 'Non-Vegetarian'}
+                                className={`w-2 h-2 rounded-xs shrink-0 ${DIETARY_META[item.dietary].dot}`}
+                                title={DIETARY_META[item.dietary].label}
                               />
                               <h4 className="text-sm font-semibold text-stone-900 truncate">
                                 {item.name}
@@ -186,7 +188,7 @@ export const CartDrawer: React.FC = () => {
                               <button
                                 onClick={() => updateQuantity(item.id, -1)}
                                 className="p-1 hover:bg-stone-100 text-stone-600 transition-colors cursor-pointer"
-                                aria-label="Decrease quantity"
+                                aria-label={`Decrease quantity of ${item.name}`}
                               >
                                 <Minus className="w-3.5 h-3.5" />
                               </button>
@@ -196,7 +198,7 @@ export const CartDrawer: React.FC = () => {
                               <button
                                 onClick={() => updateQuantity(item.id, 1)}
                                 className="p-1 hover:bg-stone-100 text-stone-600 transition-colors cursor-pointer"
-                                aria-label="Increase quantity"
+                                aria-label={`Increase quantity of ${item.name}`}
                               >
                                 <Plus className="w-3.5 h-3.5" />
                               </button>
@@ -259,7 +261,11 @@ export const CartDrawer: React.FC = () => {
                 </div>
 
                 {/* Checkout Details Form */}
-                <form id="cart-drawer-form" onSubmit={handleCheckout} className="space-y-3 pt-2">
+                {/* `noValidate` keeps the `required` attributes (still useful for semantics
+                    and mobile keyboards) but stops the browser's native tooltip
+                    from short-circuiting `submit`. Without it, `handleCheckout`
+                    never runs and the styled error box below is unreachable. */}
+                <form id="cart-drawer-form" onSubmit={handleCheckout} noValidate className="space-y-3 pt-2">
                   <div className="text-xs font-semibold uppercase tracking-wider text-stone-500">
                     Contact & Pickup Schedule
                   </div>

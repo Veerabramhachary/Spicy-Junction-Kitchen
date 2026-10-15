@@ -4,6 +4,8 @@ export interface RestaurantConfig {
   brand: {
     name: string;
     shortName: string;
+    /** Prefix for order/reservation ids, e.g. "SJK". Consumed by lib/ids.ts. */
+    idPrefix: string;
     tagline: string;
     description: string;
     cuisineType: string;
@@ -118,7 +120,11 @@ export interface RestaurantConfig {
   integrations?: {
     whatsappOrders?: {
       enabled: boolean;
-      phoneNumber: string; // international digits only, e.g. '919849281734'
+      /**
+       * The destination number is intentionally NOT configurable here.
+       * It is defined once as `contact.whatsapp` and read through lib/contact.ts,
+       * so orders, bookings, the contact page and the UPI id can never disagree.
+       */
       promptDirectOpen?: boolean;
     };
     webhookUrl?: string; // Optional custom webhook (e.g., Zapier, Make, Formspree, n8n)

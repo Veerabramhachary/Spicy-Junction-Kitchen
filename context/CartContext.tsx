@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { MenuItem, CartItem, ServiceOption, OrderRecord } from '../types/restaurant';
 import { restaurantConfig } from '../config/restaurant.config';
 import { formatPrice } from '../lib/restaurantData';
+import { createOrderId } from '../lib/ids';
 
 interface CartContextType {
   items: CartItem[];
@@ -163,7 +164,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     paymentMethod: OrderRecord['paymentMethod'];
     paymentStatus?: OrderRecord['paymentStatus'];
   }): OrderRecord => {
-    const orderId = `${restaurantConfig.brand.shortName.toUpperCase().replace(/\s+/g, '')}-${Date.now().toString().slice(-4)}`;
+    const orderId = createOrderId();
     const newRecord: OrderRecord = {
       id: orderId,
       createdAt: new Date().toISOString(),

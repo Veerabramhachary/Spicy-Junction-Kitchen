@@ -12,16 +12,19 @@ When a customer confirms a takeaway order or books a table:
 3. The restaurant staff receives the message instantly on their phone or tablet running WhatsApp Business.
 
 ### How to configure:
-Open `config/restaurant.config.ts` and set your restaurant's WhatsApp number (country code + digits, no spaces or plus signs):
+The WhatsApp number has exactly **one** home: `contact.whatsapp` in `config/restaurant.config.ts`. It **must include the country code** — `lib/contact.ts` strips `+` and spaces, so the formatting is flexible, but a missing country code fails silently and every link goes nowhere:
+
 ```typescript
-integrations: {
-  whatsappOrders: {
-    enabled: true,
-    phoneNumber: '919849281734', // e.g. 91 (India) + 10 digits
-    promptDirectOpen: true,
-  },
-}
+contact: {
+    phone: '+91 7981901713',       // display form, used for tel: links
+    whatsapp: '+91 7981901713',    // ✅ country code present
+    // whatsapp: '917981901713',   // ✅ digits-only also works
+    // whatsapp: '7981901713',     // ❌ no country code — dead links, no error
+    email: 'hello@spicyandhotjunctionkitchen.in',
+},
 ```
+
+`lib/contact.ts` derives every other format from that single value — the order/booking `wa.me` links, the UPI address (`<digits>@upi`), and the `tel:` hrefs used by all call buttons. There is no separate `integrations.whatsappOrders.phoneNumber`; it was removed because it had drifted out of sync with the contact page and was silently sending orders to a different number than the one advertised.
 
 ---
 

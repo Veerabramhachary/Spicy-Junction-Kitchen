@@ -9,6 +9,7 @@ import { getTodayISODate } from '../lib/dateUtils';
 import { useCart } from '../context/CartContext';
 import { TableBooking } from '../types/restaurant';
 import { buildWhatsAppBookingUrl, dispatchBookingNotification } from '../lib/orderDispatcher';
+import { createBookingId } from '../lib/ids';
 
 export const ReservationModal: React.FC = () => {
   const { isReservationOpen, setIsReservationOpen } = useCart();
@@ -33,7 +34,7 @@ export const ReservationModal: React.FC = () => {
     e.preventDefault();
     if (!name.trim() || !phone.trim()) return;
 
-    const id = `SJK-RES-${Math.floor(100 + Math.random() * 900)}`;
+    const id = createBookingId();
     setBookingId(id);
 
     const bookingPayload: TableBooking = {
@@ -60,6 +61,16 @@ export const ReservationModal: React.FC = () => {
     setIsReservationOpen(false);
     setIsSuccess(false);
     setCurrentBooking(null);
+    // Reset every field, not just the success state. Previously name / phone /
+    // notes / party size survived a close, so a cancelled or completed booking
+    // leaked the guest's name and phone number into the next person's form.
+    setName('');
+    setPhone('');
+    setDate(getTodayISODate());
+    setMealType('Dinner');
+    setPartySize(2);
+    setPreference('Group Gathering');
+    setNotes('');
   };
 
   const bookingWhatsAppUrl = currentBooking ? buildWhatsAppBookingUrl(currentBooking) : '';

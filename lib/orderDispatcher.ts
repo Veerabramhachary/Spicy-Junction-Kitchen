@@ -11,13 +11,14 @@
 import { OrderRecord, TableBooking } from '../types/restaurant';
 import { restaurantConfig } from '../config/restaurant.config';
 import { formatPrice } from './restaurantData';
+import { WHATSAPP_NUMBER } from './contact';
 
 /**
  * Builds the WhatsApp wa.me click-to-chat URL with a pre-filled, itemized text message.
  */
 export function buildWhatsAppOrderUrl(order: OrderRecord, customPhone?: string): string {
-  const phone = customPhone || restaurantConfig.integrations?.whatsappOrders?.phoneNumber || restaurantConfig.contact.whatsapp;
-  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  // Single source of truth: lib/contact.ts, derived from contact.whatsapp.
+  const cleanPhone = (customPhone || WHATSAPP_NUMBER).replace(/[^0-9]/g, '');
 
   const itemLines = order.items
     .map((ci) => {
@@ -62,8 +63,8 @@ export function buildWhatsAppOrderUrl(order: OrderRecord, customPhone?: string):
  * Builds the WhatsApp wa.me URL for table reservations.
  */
 export function buildWhatsAppBookingUrl(booking: TableBooking, customPhone?: string): string {
-  const phone = customPhone || restaurantConfig.integrations?.whatsappOrders?.phoneNumber || restaurantConfig.contact.whatsapp;
-  const cleanPhone = phone.replace(/[^0-9]/g, '');
+  // Single source of truth: lib/contact.ts, derived from contact.whatsapp.
+  const cleanPhone = (customPhone || WHATSAPP_NUMBER).replace(/[^0-9]/g, '');
 
   const textLines = [
     `*TABLE RESERVATION REQUEST*`,
@@ -102,9 +103,15 @@ export interface DispatchResult {
  * 3. Optional Custom webhook (Zapier, Formspree, Make, n8n)
  */
 export async function dispatchOrderNotification(order: OrderRecord): Promise<DispatchResult> {
-  const results: DispatchResult[] = [];
-
-  // 1. Send to internal Next.js API route
+  // The browser's ONLY job is to POST to the internal API route.
+  //
+  // This function previously also POSTed straight to the Google Sheet webhook
+  // and the generic webhook from the client. Because /api/orders forwards to
+  // those same destinations server-side, configuring both
+  // `integrations.googleSheetWebhookUrl` and `integrations.webhookUrl` produced
+  // FOUR dispatches per order - duplicate sheet rows and duplicate
+  // Zapier/Formspree notifications. Server-side fan-out is also more reliable
+  // (no CORS/`no-cors` opacity, and it can read env vars the browser cannot).
   try {
     const res = await fetch('/api/orders', {
       method: 'POST',
@@ -113,75 +120,16 @@ export async function dispatchOrderNotification(order: OrderRecord): Promise<Dis
     });
     if (res.ok) {
       const data = await res.json();
-      results.push({
+      return {
         success: true,
         channel: 'internal_api',
         message: 'Order recorded in internal endpoint',
         data,
-      });
+      };
     }
-  } catch (err) {
-    // API endpoint might be on a client-only build or unreachable
-  }
-
-  // 2. Google Sheets or external webhook if configured in restaurant.config.ts
-  const sheetWebhook = restaurantConfig.integrations?.googleSheetWebhookUrl;
-  if (sheetWebhook && sheetWebhook.trim()) {
-    try {
-      await fetch(sheetWebhook, {
-        method: 'POST',
-        mode: 'no-cors', // Google Apps Script Web Apps often require no-cors for simple browser POSTs
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'order',
-          orderId: order.id,
-          createdAt: order.createdAt,
-          customerName: order.customer.name,
-          customerPhone: order.customer.phone,
-          customerEmail: order.customer.email || '',
-          serviceOption: order.serviceOption,
-          fulfillmentTime: order.fulfillmentTime,
-          total: order.total,
-          itemsCount: order.items.length,
-          itemSummary: order.items.map((i) => `${i.quantity}x ${i.item.name}`).join(', '),
-          notes: order.customer.notes || '',
-        }),
-      });
-      results.push({
-        success: true,
-        channel: 'google_sheet',
-        message: 'Dispatched to Google Sheet webhook',
-      });
-    } catch (err) {
-      // quiet fail
-    }
-  }
-
-  // 3. Custom generic webhook if configured
-  const webhookUrl = restaurantConfig.integrations?.webhookUrl;
-  if (webhookUrl && webhookUrl.trim()) {
-    try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          event: 'order.placed',
-          restaurant: restaurantConfig.brand.name,
-          order,
-        }),
-      });
-      results.push({
-        success: true,
-        channel: 'custom_webhook',
-        message: 'Dispatched to external webhook',
-      });
-    } catch {
-      // quiet fail
-    }
-  }
-
-  if (results.length > 0) {
-    return results[0];
+  } catch {
+    // API endpoint unreachable - the order is still stored locally and the
+    // customer can always dispatch it over WhatsApp from the receipt.
   }
 
   return {
@@ -195,8 +143,10 @@ export async function dispatchOrderNotification(order: OrderRecord): Promise<Dis
  * Dispatches table booking notification to configured destinations.
  */
 export async function dispatchBookingNotification(booking: TableBooking): Promise<DispatchResult> {
-  const results: DispatchResult[] = [];
 
+  // As with orders: the browser only posts to the internal API route, and
+  // /api/bookings handles the Google Sheet / webhook fan-out server-side.
+  // Dispatching from both places duplicated every booking.
   try {
     const res = await fetch('/api/bookings', {
       method: 'POST',
@@ -205,50 +155,16 @@ export async function dispatchBookingNotification(booking: TableBooking): Promis
     });
     if (res.ok) {
       const data = await res.json();
-      results.push({
+      return {
         success: true,
         channel: 'internal_api',
         message: 'Booking recorded in internal endpoint',
         data,
-      });
+      };
     }
   } catch {
-    // quiet fail
-  }
-
-  const sheetWebhook = restaurantConfig.integrations?.googleSheetWebhookUrl;
-  if (sheetWebhook && sheetWebhook.trim()) {
-    try {
-      await fetch(sheetWebhook, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'booking',
-          bookingId: booking.id,
-          createdAt: booking.createdAt,
-          name: booking.name,
-          phone: booking.phone,
-          date: booking.date,
-          mealType: booking.mealType,
-          timeSlot: booking.timeSlot || '',
-          partySize: booking.partySize,
-          preference: booking.diningPreference,
-          specialRequests: booking.specialRequests || '',
-        }),
-      });
-      results.push({
-        success: true,
-        channel: 'google_sheet',
-        message: 'Booking sent to Google Sheet',
-      });
-    } catch {
-      // quiet fail
-    }
-  }
-
-  if (results.length > 0) {
-    return results[0];
+    // API endpoint unreachable - the booking stays on the guest's device and
+    // can be resent over WhatsApp from the confirmation screen.
   }
 
   return {

@@ -23,11 +23,16 @@ export const Navbar: React.FC = () => {
   return (
     <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-200">
       <div className="shell">
-        <div className="flex items-center justify-between gap-8 h-18">
-          {/* Zone 1: Single text element wordmark */}
+        {/* Gap collapses on small screens; `gap-8` alone cost 32px of the 390px budget. */}
+        <div className="flex items-center justify-between gap-2 sm:gap-4 md:gap-8 h-18">
+          {/* Zone 1: Single text element wordmark.
+              `min-w-0 truncate` lets the brand name shrink on narrow viewports.
+              Without it the wordmark, the gap and the order button below were all
+              `shrink-0`, forcing a 515px minimum width and pushing the hamburger
+              outside a 390px screen. */}
           <Link
             href="/"
-            className="text-xl sm:text-2xl font-bold tracking-tight text-stone-900 font-display whitespace-nowrap shrink-0 hover:text-orange-600 transition-colors cursor-pointer"
+            className="min-w-0 truncate text-xl sm:text-2xl font-bold tracking-tight text-stone-900 font-display hover:text-orange-600 transition-colors cursor-pointer"
           >
             {restaurantConfig.brand.name}
           </Link>
@@ -55,11 +60,13 @@ export const Navbar: React.FC = () => {
             })}
           </nav>
 
-          {/* Zone 3: 1 primary action */}
+          {/* Zone 3: 1 primary action.
+              Hidden below `md` because MobileActionBar already provides an Order
+              button on phones; showing both caused the horizontal overflow. */}
           <div className="flex items-center gap-3 shrink-0">
             <button
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors whitespace-nowrap shrink-0 shadow-xs cursor-pointer min-h-[42px]"
+              className="relative hidden md:flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-orange-600 rounded-lg hover:bg-orange-700 transition-colors whitespace-nowrap shrink-0 shadow-xs cursor-pointer min-h-[42px]"
               aria-label="View Cart and Order Takeaway"
             >
               <ShoppingBag className="w-4 h-4" />
