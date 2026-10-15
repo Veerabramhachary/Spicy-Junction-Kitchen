@@ -2,7 +2,5 @@
     "name": "Spicy Junction Kitchen",
     "description": "Authentic Hyderabadi Biryani, quick bites, small plates, solo dining and family kitchen at Almasguda Rd, Badangpet, Hyderabad.",
     "requestFramePermissions": [],
-    "majorCapabilities": [
-        "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-    ]
+    "majorCapabilities": []
 }

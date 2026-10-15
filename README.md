@@ -51,6 +51,8 @@ First test run needs the browser binary:
 npx playwright install chromium
 ```
 
+Git hooks install automatically via `npm install` (a `prepare` script runs `husky`). The pre-commit hook blocks commits containing credential-shaped strings — see [Maintenance notes](#-maintenance-notes).
+
 Test server ports: the default run reuses your dev server on **3000** (Next will not start a second `next dev` for the same directory). `test:e2e:prod` builds and serves on **3100** so it can run alongside your dev server.
 
 > **Prefer `test:e2e:prod` for anything you intend to trust.** The default reuses your `next dev` server, which compiles routes on demand; under parallel workers that intermittently exceeds action timeouts and reports failures that pass on re-run. Production mode builds once and runs against `next start`, so a green run actually means the app works.
@@ -203,9 +205,12 @@ Out of the box the app needs **no backend**. Orders and bookings are dispatched 
 | Channel | Configure via | Notes |
 |---|---|---|
 | WhatsApp | `contact.whatsapp` | Always on. Pre-filled itemised bill. |
-| Google Sheets | `GOOGLE_SHEETS_WEBHOOK_URL` | Apps Script web app URL |
-| Generic webhook | `ORDER_WEBHOOK_URL`, `BOOKING_WEBHOOK_URL` | Zapier, Make, n8n, Formspree |
-| Config fallback | `integrations.googleSheetWebhookUrl`, `integrations.webhookUrl` | Used when env vars are unset |
+| Google Sheets (orders) | `ORDER_GOOGLE_SHEETS_WEBHOOK_URL` | Apps Script web app URL |
+| Google Sheets (bookings) | `BOOKING_GOOGLE_SHEETS_WEBHOOK_URL` | Separate script — the two have different column layouts |
+| Generic webhook (orders) | `ORDER_WEBHOOK_URL` | Zapier, Make, n8n, Formspree |
+| Generic webhook fallback | `integrations.webhookUrl` in config | Used when `ORDER_WEBHOOK_URL` is unset |
+
+All fan-out happens **server-side** in `/api/orders` and `/api/bookings`. The browser only POSTs to those routes — it never contacts a webhook directly. That was previously true, and setting both a config value and an env var produced duplicate notifications.
 
 Dispatch failures are swallowed by design — a failed webhook never blocks a customer from ordering.
 
@@ -257,13 +262,14 @@ npm run start
 
 | Variable | Required | Purpose |
 |---|---|---|
-| `APP_URL` | Recommended | Absolute URL for canonical links and JSON-LD |
-| `GOOGLE_SHEETS_WEBHOOK_URL` | No | Google Apps Script endpoint for order/booking rows |
+| `APP_URL` | Recommended | Absolute URL for canonical links, OpenGraph and JSON-LD |
+| `ORDER_GOOGLE_SHEETS_WEBHOOK_URL` | No | Apps Script endpoint for **order** rows |
+| `BOOKING_GOOGLE_SHEETS_WEBHOOK_URL` | No | Apps Script endpoint for **booking** rows |
 | `ORDER_WEBHOOK_URL` | No | Forward order payloads to an external service |
-| `BOOKING_WEBHOOK_URL` | No | Forward booking payloads |
-| `GEMINI_API_KEY` | No | Vestigial — see maintenance notes |
 
-Copy `.env.example` to `.env` and fill in what you need. Nothing is required to run.
+Copy `.env.example` to `.env` and fill in what you need. Nothing is required to run — without any of these the site works fully, with orders and bookings kept in the browser and dispatched over WhatsApp.
+
+> `.env` is gitignored. The Apps Script URLs are **live write credentials** — anyone holding one can append rows to your sheet, which contains customer names and phone numbers. Never commit them; see [Maintenance notes](#-maintenance-notes).
 
 ---
 
@@ -307,13 +313,13 @@ Copy `.env.example` to `.env` and fill in what you need. Nothing is required to 
 
 ## 🧹 Maintenance notes
 
-**Unused dependencies.** Five packages are declared but imported nowhere: `@google/genai`, `dotenv`, `motion` (dependencies) and `esbuild`, `express` (devDependencies). Safe to remove.
+**Unused dependencies.** Three packages are declared but imported nowhere: `dotenv` and `motion` (dependencies) and `express` (devDependency). Safe to remove.
 
 **Stale image config.** `next.config.mjs` still allows remote images from `images.unsplash.com` and `picsum.photos`. Every image now lives in `public/images/`, so those `remotePatterns` entries are unused.
 
-**Open data issue** — customer-visible:
+**Dead config field.** `integrations.googleSheetWebhookUrl` in `restaurant.config.ts` is read by nothing. Sheets dispatch is configured exclusively through `ORDER_GOOGLE_SHEETS_WEBHOOK_URL` / `BOOKING_GOOGLE_SHEETS_WEBHOOK_URL`. Safe to delete.
 
-- `address.postalCode` is `"500113"` but `address.full` ends `"500112"`. Both render publicly.
+**Secrets stay out of git.** A pre-commit hook (`scripts/check-secrets.mjs`, run via Husky) blocks commits containing credential-shaped strings. The Google Apps Script URLs are live write endpoints into a sheet holding customer PII — treat them as passwords. GitHub's own secret scanning is a second line of defence, but it only fires *after* a push, by which point the secret is in history.
 
 **Dead code, previously.** `OrderHistoryModal` was never imported; it is now wired into `/order`. Worth checking that new components get mounted.
 
